@@ -1,8 +1,14 @@
 import EventCalendar from "@/components/EventCalendar";
 import { getAllEvents, categorizeEvents, formatDateDisplay } from "@/lib/events";
 import Link from "next/link";
+import type { Metadata } from "next";
 
 // Keep formatDateDisplay in scope for upcoming/past event cards
+
+export const metadata: Metadata = {
+  title: "Events",
+  description: "Explore upcoming sessions, workshops and past events conducted by Data Nexus.",
+};
 
 export const dynamic = "force-dynamic";
 

@@ -1,4 +1,10 @@
 import { getTeamMembers } from "@/lib/team";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Our Team",
+  description: "Meet the leadership team of Data Nexus — the student-led tech club at JBREC.",
+};
 
 export default function Team() {
   const members = getTeamMembers();

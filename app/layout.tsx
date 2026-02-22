@@ -1,14 +1,23 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const geist = Geist({
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Data Nexus",
-  description: "Official website of Data Nexus Club",
+  title: {
+    default: "Data Nexus",
+    template: "%s | Data Nexus",
+  },
+  description:
+    "Official website of Data Nexus — the student-led tech club of the Department of Data Science, JBREC.",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
@@ -19,28 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geist.className} bg-black text-white`}>
-
-        {/* Navbar */}
-        <nav className="flex justify-between items-center px-8 py-6 border-b border-[#1F1F1F]">
-          <h1 className="text-xl font-semibold tracking-wide">
-            DATA NEXUS
-          </h1>
-
-          <div className="space-x-8 text-gray-400 text-sm">
-            <a href="/" className="hover:text-white transition">
-              Home
-            </a>
-            <a href="/team" className="hover:text-white transition">
-              Team
-            </a>
-            <a href="/events" className="hover:text-white transition">
-              Events
-            </a>
-          </div>
-        </nav>
-
+        <Navbar />
         {children}
-
+        <Footer />
       </body>
     </html>
   );
