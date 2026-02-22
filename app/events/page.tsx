@@ -2,11 +2,13 @@ import EventCalendar from "@/components/EventCalendar";
 import { getAllEvents, categorizeEvents, formatDateDisplay } from "@/lib/events";
 import Link from "next/link";
 
+// Keep formatDateDisplay in scope for upcoming/past event cards
+
 export const dynamic = "force-dynamic";
 
 export default function Events() {
   const events = getAllEvents();
-  const { today: currentEvents, upcoming: upcomingEvents, past: pastEvents } =
+  const { upcoming: upcomingEvents, past: pastEvents } =
     categorizeEvents(events);
 
   return (
@@ -25,48 +27,6 @@ export default function Events() {
 
         {/* Calendar */}
         <EventCalendar events={events} />
-
-        {/* ================= CURRENT EVENTS ================= */}
-        {currentEvents.length > 0 && (
-          <section className="space-y-12">
-            <h2 className="text-3xl font-semibold text-white">
-              Happening Today
-            </h2>
-
-            <div className="grid md:grid-cols-3 gap-12">
-              {currentEvents.map((event) => (
-                <Link key={event.slug} href={`/events/${event.slug}`}>
-                  <div className="group border border-white rounded-3xl overflow-hidden hover:shadow-lg transition cursor-pointer">
-
-                    {event.image ? (
-                      <img
-                        src={event.image}
-                        alt={event.title}
-                        className="h-60 w-full object-cover"
-                      />
-                    ) : (
-                      <div className="h-60 bg-[#111111] flex items-center justify-center">
-                        <span className="text-gray-600 text-sm">
-                          Event Image
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="p-6">
-                      <h3 className="text-lg font-semibold">
-                        {event.title}
-                      </h3>
-                      <p className="text-gray-400 text-sm mt-2">
-                        {formatDateDisplay(event.date)}
-                      </p>
-                    </div>
-
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
 
         {/* ================= UPCOMING ================= */}
         <section className="space-y-12">
