@@ -1,6 +1,6 @@
 ---
 name: KOTAGIRI AMULYA
-role: President
+role: PRESIDENT
 photo: /images/uploads/president.jpeg
 order: 1
 ---
