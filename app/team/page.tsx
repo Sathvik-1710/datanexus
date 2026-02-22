@@ -1,4 +1,5 @@
 import { getTeamMembers } from "@/lib/team";
+import TeamGrid from "@/components/TeamGrid";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -6,43 +7,27 @@ export const metadata: Metadata = {
   description: "Meet the leadership team of Data Nexus — the student-led tech club at JBREC.",
 };
 
-export default function Team() {
+export default function TeamPage() {
   const members = getTeamMembers();
 
   return (
-    <main className="min-h-screen bg-black text-white px-6 py-20">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-5xl md:text-6xl font-bold mb-16 text-center">
-          Our Leadership
-        </h1>
+    <main className="min-h-screen bg-black text-white px-6 py-24">
+      <div className="max-w-6xl mx-auto space-y-20">
 
-        {members.length === 0 ? (
-          <p className="text-center text-gray-500">Team info coming soon.</p>
-        ) : (
-          <div className="grid md:grid-cols-3 gap-10">
-            {members.map((member) => (
-              <div
-                key={member.slug}
-                className="bg-[#111111] border border-[#1F1F1F] rounded-2xl p-6 hover:border-white transition duration-300"
-              >
-                <div className="w-full h-64 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] rounded-xl mb-6 overflow-hidden flex items-center justify-center">
-                  {member.photo ? (
-                    <img
-                      src={member.photo}
-                      alt={member.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-gray-600 text-sm">Photo Placeholder</span>
-                  )}
-                </div>
+        {/* Header */}
+        <div className="text-center space-y-4">
+          <p className="text-xs text-gray-500 uppercase tracking-[0.3em]">People behind the club</p>
+          <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
+            Our Leadership
+          </h1>
+          <p className="text-gray-500 max-w-xl mx-auto">
+            The passionate students driving Data Nexus forward — from organising events to building projects.
+          </p>
+        </div>
 
-                <h2 className="text-xl font-semibold mb-1">{member.name || "TBA"}</h2>
-                <p className="text-gray-400 text-sm">{member.role}</p>
-              </div>
-            ))}
-          </div>
-        )}
+        {/* Animated grid */}
+        <TeamGrid members={members} />
+
       </div>
     </main>
   );
