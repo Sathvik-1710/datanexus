@@ -1,65 +1,211 @@
-import Image from "next/image";
+"use client";
+
+import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className="bg-black text-white">
+
+      {/* ================= HERO ================= */}
+      <section className="min-h-screen flex flex-col justify-center items-center text-center px-6 relative overflow-hidden">
+
+        <div className="absolute w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl -z-10"></div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-5xl md:text-7xl font-bold tracking-tight"
+        >
+          Data Nexus
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.8 }}
+          className="mt-6 text-zinc-400 max-w-2xl text-lg"
+        >
+          A student-led initiative driving innovation in Data Science,
+          AI, and modern technology.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.8 }}
+          className="mt-10 flex gap-6"
+        >
+          <Link
+            href="/events"
+            className="px-6 py-3 bg-white text-black rounded-full font-medium hover:scale-105 transition"
+          >
+            Explore Events
+          </Link>
+
+          <Link
+            href="/team"
+            className="px-6 py-3 border border-white/20 rounded-full hover:border-white transition"
+          >
+            Meet The Team
+          </Link>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2 }}
+          className="absolute bottom-10 text-zinc-500 text-sm animate-pulse"
+        >
+          Scroll ↓
+        </motion.div>
+      </section>
+
+
+      {/* ================= INSTITUTIONAL IDENTITY ================= */}
+      <section className="py-24 px-6 border-t border-white/10">
+        <div className="max-w-5xl mx-auto text-center space-y-8">
+
+          {/* Logo placeholders */}
+          <div className="flex justify-center items-center gap-6">
+            <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center">
+              <span className="text-xs text-zinc-500">JBREC</span>
+            </div>
+
+            <span className="text-zinc-500 text-xl">×</span>
+
+            <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center">
+              <span className="text-xs text-zinc-500">DN</span>
+            </div>
+          </div>
+
+          <h3 className="text-2xl md:text-3xl font-semibold">
+            Department of Data Science
+          </h3>
+
+          <p className="text-zinc-400">
+            Joginpally B.R. Engineering College (UGC Autonomous)
           </p>
+
+          <p className="text-zinc-500 text-sm">
+            Yenkapally, Moinabad
+          </p>
+
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+
+      {/* ================= FOCUS AREAS ================= */}
+      <section className="py-32 px-6 border-t border-white/10">
+        <div className="max-w-6xl mx-auto space-y-20">
+
+          <div className="text-center space-y-6">
+            <h2 className="text-4xl md:text-5xl font-semibold tracking-tight">
+              Our Focus
+            </h2>
+            <p className="text-zinc-500 max-w-2xl mx-auto">
+              We operate at the intersection of data, technology, and innovation.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-12">
+
+            {[
+              {
+                title: "Data Science",
+                desc: "Exploring data, machine learning, AI, and intelligent systems."
+              },
+              {
+                title: "Web Development",
+                desc: "Building modern, scalable and beautiful digital experiences."
+              },
+              {
+                title: "Data Security",
+                desc: "Understanding cybersecurity and protecting digital infrastructure."
+              }
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.03 }}
+                className="group border border-white/10 rounded-3xl p-10 backdrop-blur-xl bg-white/5 hover:border-white/30 transition"
+              >
+                <h3 className="text-2xl font-semibold mb-4">
+                  {item.title}
+                </h3>
+                <p className="text-zinc-400 leading-relaxed">
+                  {item.desc}
+                </p>
+                <div className="mt-6 h-[1px] bg-white/20 w-0 group-hover:w-full transition-all duration-500"></div>
+              </motion.div>
+            ))}
+
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+
+
+      {/* ================= FACULTY COORDINATORS ================= */}
+      <section className="py-32 px-6 border-t border-white/10">
+        <div className="max-w-6xl mx-auto space-y-20">
+
+          <div className="text-center space-y-6">
+            <h2 className="text-4xl md:text-5xl font-semibold tracking-tight">
+              Faculty Coordinators
+            </h2>
+            <p className="text-zinc-500 max-w-2xl mx-auto">
+              Guided and supported by the Department of Data Science.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-12">
+
+            {/* HOD Card with subtle glow */}
+            <div className="relative border border-white/20 rounded-3xl p-8 backdrop-blur-xl bg-white/5 text-center shadow-[0_0_40px_rgba(255,255,255,0.05)]">
+
+              <div className="w-28 h-28 mx-auto rounded-full bg-white/10 mb-6 flex items-center justify-center">
+                <span className="text-zinc-500 text-sm">Photo</span>
+              </div>
+
+              <h3 className="text-xl font-semibold">
+                DR. GAYATRI TANGIRALA
+              </h3>
+
+              <p className="text-zinc-400 text-sm mt-2">
+                M.Tech, Ph.D
+              </p>
+
+              <p className="text-zinc-500 text-sm mt-1">
+                HOD CSE (Data Science)
+              </p>
+
+            </div>
+
+            {/* Associate Professor Placeholder */}
+            <div className="border border-white/10 rounded-3xl p-8 backdrop-blur-xl bg-white/5 text-center hover:border-white/30 transition">
+
+              <div className="w-28 h-28 mx-auto rounded-full bg-white/10 mb-6 flex items-center justify-center">
+                <span className="text-zinc-500 text-sm">Photo</span>
+              </div>
+
+              <h3 className="text-xl font-semibold">
+                Faculty Name
+              </h3>
+
+              <p className="text-zinc-400 text-sm mt-2">
+                Associate Professor
+              </p>
+
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    </main>
   );
 }
