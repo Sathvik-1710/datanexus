@@ -1,39 +1,13 @@
 import EventCalendar from "@/components/EventCalendar";
-import { getAllEvents } from "@/lib/events";
+import { getAllEvents, categorizeEvents, formatDateDisplay } from "@/lib/events";
 import Link from "next/link";
 
-function normalizeDate(date: Date) {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-}
+export const dynamic = "force-dynamic";
 
 export default function Events() {
   const events = getAllEvents();
-
-  const today = normalizeDate(new Date());
-
-  const eventsWithDate = events.map((event) => {
-    const eventDate = normalizeDate(new Date(event.date));
-    return { ...event, dateObj: eventDate };
-  });
-
-  const currentEvents = eventsWithDate.filter(
-    (event) => event.dateObj.getTime() === today.getTime()
-  );
-
-  const upcomingEvents = eventsWithDate.filter(
-    (event) => event.dateObj.getTime() > today.getTime()
-  );
-
-  const pastEvents = eventsWithDate.filter(
-    (event) => event.dateObj.getTime() < today.getTime()
-  );
-
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
+  const { today: currentEvents, upcoming: upcomingEvents, past: pastEvents } =
+    categorizeEvents(events);
 
   return (
     <main className="min-h-screen bg-black text-white px-6 py-24">
@@ -83,7 +57,7 @@ export default function Events() {
                         {event.title}
                       </h3>
                       <p className="text-gray-400 text-sm mt-2">
-                        {formatDate(event.dateObj)}
+                        {formatDateDisplay(event.date)}
                       </p>
                     </div>
 
@@ -129,7 +103,7 @@ export default function Events() {
                         {event.title}
                       </h3>
                       <p className="text-gray-500 text-sm mt-2">
-                        {formatDate(event.dateObj)}
+                        {formatDateDisplay(event.date)}
                       </p>
                     </div>
 
@@ -178,7 +152,7 @@ export default function Events() {
                         {event.title}
                       </h3>
                       <p className="text-gray-500 text-sm mt-2">
-                        {formatDate(event.dateObj)}
+                        {formatDateDisplay(event.date)}
                       </p>
                     </div>
 
