@@ -9,6 +9,8 @@ export type TeamMember = {
   name: string;
   role: string;
   photo?: string;
+  bio?: string;
+  linkedin?: string;
   order?: number;
 };
 
@@ -32,6 +34,8 @@ export function getTeamMembers(): TeamMember[] {
         name: data.name || "",
         role: data.role || "",
         photo: data.photo || "",
+        bio: (data.bio as string | undefined)?.trim() || undefined,
+        linkedin: (data.linkedin as string | undefined) || undefined,
         order: typeof data.order === "number" ? data.order : undefined,
       };
     });

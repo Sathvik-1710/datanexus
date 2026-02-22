@@ -40,6 +40,8 @@ collections:
     fields:
       - { label: "Name", name: "name", widget: "string" }
       - { label: "Role", name: "role", widget: "string" }
+      - { label: "Bio", name: "bio", widget: "text", required: false, hint: "Short personal statement shown in the popup when someone clicks the card" }
+      - { label: "LinkedIn URL", name: "linkedin", widget: "string", required: false, hint: "Full LinkedIn profile URL" }
       - { label: "Photo", name: "photo", widget: "image", required: false }
       - { label: "Order", name: "order", widget: "number", required: false, hint: "Display order (lower = first)" }
 
