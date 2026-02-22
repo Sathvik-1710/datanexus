@@ -1,6 +1,6 @@
 ---
-name: ""
-role: "Operations Head"
+name: "?"
+role: OPERATIONS HEAD
 photo: ""
 order: 6
 ---
