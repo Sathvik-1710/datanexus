@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import Link from "next/link";
 import Script from "next/script";
 import "./globals.css";
-
-const geist = Geist({
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Data Nexus",
@@ -19,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${geist.className} bg-black text-white`}>
+      <body className="font-sans bg-black text-white">
         
         {/* Netlify Identity Script */}
         <Script
@@ -34,15 +30,18 @@ export default function RootLayout({
           </h1>
 
           <div className="space-x-8 text-gray-400 text-sm">
-            <a href="/" className="hover:text-white transition">
+            <Link href="/" className="hover:text-white transition">
               Home
-            </a>
-            <a href="/team" className="hover:text-white transition">
+            </Link>
+            <Link href="/team" className="hover:text-white transition">
               Team
-            </a>
-            <a href="/events" className="hover:text-white transition">
+            </Link>
+            <Link href="/faculty" className="hover:text-white transition">
+              Faculty
+            </Link>
+            <Link href="/events" className="hover:text-white transition">
               Events
-            </a>
+            </Link>
           </div>
         </nav>
 
