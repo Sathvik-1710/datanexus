@@ -6,15 +6,26 @@ media_folder: "public/images/uploads"
 public_folder: "/images/uploads"
 
 collections:
-
   - name: "events"
     label: "Events"
     folder: "content/events"
     create: true
     slug: "{{slug}}"
+    identifier_field: "title"
+    summary: "{{title}} — {{date}}"
     fields:
       - { label: "Title", name: "title", widget: "string" }
-      - { label: "Date", name: "date", widget: "date", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+
+      # IMPORTANT: Your deployed Netlify CMS bundle doesn't support widget: "date".
+      # Use string with validation; store as YYYY-MM-DD.
+      - label: "Date (YYYY-MM-DD)"
+        name: "date"
+        widget: "string"
+        hint: "Enter as YYYY-MM-DD (e.g., 2026-03-15). Website displays 15 March 2026."
+        pattern:
+          - "^\\d{4}-\\d{2}-\\d{2}$"
+          - "Use format YYYY-MM-DD (e.g., 2026-03-15)."
+
       - { label: "Description", name: "description", widget: "text" }
       - { label: "Image", name: "image", widget: "image", required: false }
       - { label: "Order", name: "order", widget: "number", required: false, hint: "Optional display order (lower = first)" }
@@ -24,6 +35,8 @@ collections:
     folder: "content/team"
     create: true
     slug: "{{slug}}"
+    identifier_field: "name"
+    summary: "{{name}} — {{role}}"
     fields:
       - { label: "Name", name: "name", widget: "string" }
       - { label: "Role", name: "role", widget: "string" }
@@ -35,9 +48,11 @@ collections:
     folder: "content/faculty"
     create: true
     slug: "{{slug}}"
+    identifier_field: "name"
+    summary: "{{name}} — {{designation}}"
     fields:
       - { label: "Name", name: "name", widget: "string" }
       - { label: "Designation", name: "designation", widget: "string" }
       - { label: "Photo", name: "photo", widget: "image", required: false }
-      - { label: "Is HOD", name: "isHOD", widget: "boolean", default: false, required: false, hint: "Check if this person is the Head of Department (appears first)" }
+      - { label: "Is HOD", name: "isHOD", widget: "boolean", default: false, required: false, hint: "Check if this person is HOD (appears first)" }
       - { label: "Order", name: "order", widget: "number", required: false, hint: "Display order among non-HOD faculty (lower = first)" }
