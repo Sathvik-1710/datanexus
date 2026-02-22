@@ -2,7 +2,8 @@ backend:
   name: github
   repo: Sathvik-1710/datanexus
   branch: main
-  base_url: https://github-auth-callback.vercel.app # Free OAuth gateway for Decap CMS
+  base_url: "" # Empty means it will use the current domain
+  auth_endpoint: api/auth # Paths are relative to base_url
 
 media_folder: "public/images/uploads"
 public_folder: "/images/uploads"
