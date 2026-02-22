@@ -82,9 +82,9 @@ export default function EventCalendar({ events }: Props) {
     selectedDate === null
       ? []
       : eventsWithDate.filter(
-          (event) =>
-            event.dateObj.getTime() === selectedDate.getTime()
-        );
+        (event) =>
+          event.dateObj.getTime() === selectedDate.getTime()
+      );
 
   return (
     <div className="grid md:grid-cols-2 gap-28">
@@ -131,7 +131,7 @@ export default function EventCalendar({ events }: Props) {
 
         {/* Weekdays */}
         <div className="grid grid-cols-7 text-xs text-gray-500 mb-6">
-          {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((day) => (
+          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
             <div key={day} className="text-center">
               {day}
             </div>
@@ -152,13 +152,13 @@ export default function EventCalendar({ events }: Props) {
               if (!date) return <div key={index}></div>;
 
               const hasEvent = eventsWithDate.some(
-                (event) =>
-                  event.dateObj.getTime() === date.getTime()
+                (event) => event.dateObj.getTime() === date.getTime()
               );
 
               const isSelected =
-                selectedDate &&
-                date.getTime() === selectedDate.getTime();
+                selectedDate && date.getTime() === selectedDate.getTime();
+
+              const isPast = date < today;
 
               return (
                 <div
@@ -168,20 +168,24 @@ export default function EventCalendar({ events }: Props) {
                 >
                   <div
                     className={`
-                      w-11 h-11 flex items-center justify-center transition
-                      ${
-                        isSelected
-                          ? "bg-white text-black rounded-full shadow-lg"
-                          : "group-hover:bg-white/10 rounded-full"
+                      w-11 h-11 flex items-center justify-center transition text-sm relative
+                      ${isSelected
+                        ? "bg-white text-black rounded-full shadow-lg font-semibold"
+                        : hasEvent
+                          ? "bg-white/10 rounded-full text-white font-medium hover:bg-white/20"
+                          : "group-hover:bg-white/5 rounded-full"
                       }
+                      ${isPast && !isSelected ? "text-gray-500 font-normal" : ""}
+                      ${!isPast && !isSelected ? "font-medium" : ""}
                     `}
                   >
                     {date.getDate()}
-                  </div>
 
-                  {hasEvent && (
-                    <div className="w-1.5 h-1.5 bg-white rounded-full mt-1"></div>
-                  )}
+                    {/* Tiny dot for events if not selected to make it even clearer but still subtle */}
+                    {hasEvent && !isSelected && (
+                      <div className="absolute -bottom-1 w-1 h-1 bg-white/40 rounded-full"></div>
+                    )}
+                  </div>
                 </div>
               );
             })}
