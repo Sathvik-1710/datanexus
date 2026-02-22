@@ -16,7 +16,11 @@ export const metadata: Metadata = {
   description:
     "Official website of Data Nexus — the student-led tech club of the Department of Data Science, JBREC.",
   icons: {
-    icon: "/favicon.png",
+    icon: [
+      { url: "/favicon.png", type: "image/png" },
+    ],
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
 };
 
