@@ -1,6 +1,6 @@
 ---
 name: SATHVIK ROSHAN
-role: Vice President
+role: VICE PRESIDENT
 bio: I code for fun.
 linkedin: https://www.linkedin.com/in/sathvik-roshan/
 photo: /images/uploads/me1.jpeg
