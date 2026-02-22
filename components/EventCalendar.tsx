@@ -8,6 +8,7 @@ type EventType = {
   title: string;
   date: string;
   slug: string;
+  image?: string;
 };
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
 
 export default function EventCalendar({ events }: Props) {
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const [currentMonth, setCurrentMonth] = useState(
     new Date(today.getFullYear(), today.getMonth(), 1)
@@ -23,11 +25,15 @@ export default function EventCalendar({ events }: Props) {
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(today);
 
-  const eventsWithDate = events.map((event) => ({
-    ...event,
-    dateObj: new Date(event.date),
-  }));
+  const eventsWithDate = useMemo(() => {
+    return events.map((event) => {
+      const dateObj = new Date(event.date);
+      dateObj.setHours(0, 0, 0, 0);
+      return { ...event, dateObj };
+    });
+  }, [events]);
 
+  // 🔥 Upcoming = today + future
   const upcomingEvents = eventsWithDate.filter(
     (event) => event.dateObj >= today
   );
@@ -52,13 +58,13 @@ export default function EventCalendar({ events }: Props) {
     }
 
     for (let d = 1; d <= daysInMonth; d++) {
-      days.push(
-        new Date(
-          currentMonth.getFullYear(),
-          currentMonth.getMonth(),
-          d
-        )
+      const date = new Date(
+        currentMonth.getFullYear(),
+        currentMonth.getMonth(),
+        d
       );
+      date.setHours(0, 0, 0, 0);
+      days.push(date);
     }
 
     return days;
@@ -74,14 +80,13 @@ export default function EventCalendar({ events }: Props) {
       ? []
       : eventsWithDate.filter(
           (event) =>
-            event.dateObj.toDateString() ===
-            selectedDate.toDateString()
+            event.dateObj.getTime() === selectedDate.getTime()
         );
 
   return (
     <div className="grid md:grid-cols-2 gap-28">
 
-      {/* LEFT SIDE — CALENDAR */}
+      {/* CALENDAR */}
       <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-10">
 
         {/* Header */}
@@ -130,7 +135,7 @@ export default function EventCalendar({ events }: Props) {
           ))}
         </div>
 
-        {/* Animated Grid */}
+        {/* Calendar Grid */}
         <AnimatePresence mode="wait">
           <motion.div
             key={monthLabel}
@@ -141,20 +146,16 @@ export default function EventCalendar({ events }: Props) {
             className="grid grid-cols-7 gap-y-6"
           >
             {calendarDays.map((date, index) => {
-              if (date === null) {
-                return <div key={index}></div>;
-              }
+              if (!date) return <div key={index}></div>;
 
-              const hasEvent = upcomingEvents.some(
+              const hasEvent = eventsWithDate.some(
                 (event) =>
-                  event.dateObj.toDateString() ===
-                  date.toDateString()
+                  event.dateObj.getTime() === date.getTime()
               );
 
               const isSelected =
                 selectedDate &&
-                date.toDateString() ===
-                  selectedDate.toDateString();
+                date.getTime() === selectedDate.getTime();
 
               return (
                 <div
@@ -185,7 +186,7 @@ export default function EventCalendar({ events }: Props) {
         </AnimatePresence>
       </div>
 
-      {/* RIGHT SIDE — UPCOMING */}
+      {/* UPCOMING EVENTS */}
       <div className="space-y-12">
 
         <h3 className="text-2xl font-semibold">
@@ -197,28 +198,36 @@ export default function EventCalendar({ events }: Props) {
             No upcoming events.
           </p>
         ) : (
-          upcomingEvents.map((event) => (
-            <Link key={event.slug} href={`/events/${event.slug}`}>
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-                className="border border-white/10 backdrop-blur-xl bg-white/5 rounded-2xl p-6 cursor-pointer"
-              >
-                <h4 className="text-lg font-semibold">
-                  {event.title}
-                </h4>
-                <p className="text-gray-400 text-sm mt-2">
-                  {event.date}
-                </p>
-              </motion.div>
-            </Link>
-          ))
+          upcomingEvents.map((event) => {
+            const formattedDate = new Date(event.date).toLocaleDateString(
+              "en-IN",
+              { day: "numeric", month: "long", year: "numeric" }
+            );
+
+            return (
+              <Link key={event.slug} href={`/events/${event.slug}`}>
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.2 }}
+                  className="border border-white/10 backdrop-blur-xl bg-white/5 rounded-2xl p-6 cursor-pointer"
+                >
+                  <h4 className="text-lg font-semibold">
+                    {event.title}
+                  </h4>
+                  <p className="text-gray-400 text-sm mt-2">
+                    {formattedDate}
+                  </p>
+                </motion.div>
+              </Link>
+            );
+          })
         )}
 
         {selectedDate && (
           <div className="pt-10 border-t border-white/10">
             <h4 className="mb-4">
-              Events on {selectedDate.toDateString()}
+              Events on{" "}
+              {selectedDate.toLocaleDateString("en-IN")}
             </h4>
 
             {eventsOnSelected.length === 0 ? (

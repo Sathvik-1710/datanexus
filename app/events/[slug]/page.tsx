@@ -1,75 +1,59 @@
-import EventCalendar from "@/components/EventCalendar";
-import Link from "next/link";
+import { getEventBySlug, getAllEvents } from "@/lib/events";
+import { notFound } from "next/navigation";
 
-export default function Events() {
-  const events = [
-    {
-      title: "AI Bootcamp 2026",
-      date: "2026-03-15",
-      slug: "ai-bootcamp-2026",
-    },
-    {
-      title: "Web Dev Workshop",
-      date: "2026-04-02",
-      slug: "web-dev-workshop",
-    },
-  ];
+export async function generateStaticParams() {
+  const events = getAllEvents();
+  return events.map((event) => ({
+    slug: event.slug,
+  }));
+}
+
+export default function EventPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const event = getEventBySlug(params.slug);
+
+  if (!event) return notFound();
+
+  const formattedDate = event.date
+    ? new Date(event.date).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : "Date TBA";
 
   return (
-    <main className="min-h-screen bg-black text-white px-6 py-20">
-      <div className="max-w-6xl mx-auto space-y-24">
+    <main className="min-h-screen bg-black text-white px-6 py-24">
+      <div className="max-w-4xl mx-auto space-y-12">
 
         {/* Title */}
-        <h1 className="text-5xl md:text-6xl font-bold text-center">
-          Events
-        </h1>
-
-        {/* Calendar Section */}
-        <EventCalendar events={events} />
-
-        {/* Upcoming This Month */}
-        <section className="space-y-8">
-          <h2 className="text-3xl font-semibold">
-            Upcoming This Month
-          </h2>
-
-          <div className="bg-[#111111] border border-[#1F1F1F] rounded-2xl p-8">
-            <p className="text-gray-400">
-              Stay tuned for exciting sessions, workshops and club activities happening this month.
-            </p>
-          </div>
+        <section className="space-y-4">
+          <h1 className="text-4xl md:text-5xl font-bold">
+            {event.title}
+          </h1>
+          <p className="text-gray-400">
+            {formattedDate}
+          </p>
         </section>
 
-        {/* Past Events Gallery */}
-        <section className="space-y-10">
-          <h2 className="text-3xl font-semibold">
-            Past Events
-          </h2>
+        {/* Image */}
+        {event.image && (
+          <img
+            src={event.image}
+            alt={event.title}
+            className="w-full rounded-3xl object-cover"
+          />
+        )}
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[1, 2, 3].map((item) => (
-              <div
-                key={item}
-                className="bg-[#111111] border border-[#1F1F1F] rounded-2xl overflow-hidden hover:border-white transition"
-              >
-                <div className="h-60 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] flex items-center justify-center">
-                  <span className="text-gray-600 text-sm">
-                    Past Event Image
-                  </span>
-                </div>
-
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold">
-                    Event Title
-                  </h3>
-                  <p className="text-gray-400 text-sm">
-                    Brief recap of the event.
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        {/* Description */}
+        {event.description && (
+          <section className="prose prose-invert max-w-none">
+            <p>{event.description}</p>
+          </section>
+        )}
 
       </div>
     </main>
