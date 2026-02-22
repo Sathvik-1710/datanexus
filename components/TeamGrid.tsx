@@ -64,8 +64,25 @@ export default function TeamGrid({ members }: { members: TeamMember[] }) {
                             )}
                         </div>
 
+                        {/* LinkedIn button on card */}
+                        {member.linkedin && (
+                            <div className="mt-5 flex justify-center">
+                                <a
+                                    href={member.linkedin}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 hover:border-[#0A66C2]/60 hover:bg-[#0A66C2]/10 transition text-xs text-gray-400 hover:text-[#0A66C2]"
+                                    aria-label={`${member.name} on LinkedIn`}
+                                >
+                                    <LinkedInIcon />
+                                    <span>LinkedIn</span>
+                                </a>
+                            </div>
+                        )}
+
                         {/* Hover underline */}
-                        <div className="mt-6 h-[1px] bg-white/20 w-0 group-hover:w-full mx-auto transition-all duration-500" />
+                        <div className="mt-4 h-[1px] bg-white/20 w-0 group-hover:w-full mx-auto transition-all duration-500" />
                     </motion.div>
                 ))}
             </div>
