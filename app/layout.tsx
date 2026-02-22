@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageLoader from "@/components/PageLoader";
+import ParticleBackground from "@/components/ParticleBackground";
+import CursorGlow from "@/components/CursorGlow";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -27,6 +29,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geist.className} bg-black text-white`}>
+        {/* Global background effects */}
+        <ParticleBackground />
+        <CursorGlow />
         <PageLoader>
           <Navbar />
           {children}
