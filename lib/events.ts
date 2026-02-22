@@ -78,8 +78,13 @@ export function getAllEvents(): EventType[] {
         slug,
         title: data.title || "Untitled Event",
         date: toDateOnly(data.date),
-        image: data.image || "",
-        description: content.trim() || "",
+        // CMS saves image as a frontmatter field — use it directly
+        image: data.image || undefined,
+        // CMS saves description as a frontmatter field (widget: "text").
+        // Fall back to markdown body content for manually written files.
+        description: (data.description as string | undefined)?.trim()
+          || content.trim()
+          || undefined,
       };
     });
 

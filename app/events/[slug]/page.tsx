@@ -44,6 +44,10 @@ export default async function EventPage({
               src={event.image}
               alt={event.title}
               className="w-full max-h-[500px] object-cover"
+              onError={(e) => {
+                // If the image URL is broken, hide it gracefully
+                (e.target as HTMLImageElement).style.display = "none";
+              }}
             />
           </div>
         )}
