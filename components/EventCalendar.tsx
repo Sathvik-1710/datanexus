@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { formatDateDisplay } from "@/lib/dateUtils";
 
 type EventType = {
   title: string;
@@ -27,7 +28,9 @@ export default function EventCalendar({ events }: Props) {
 
   const eventsWithDate = useMemo(() => {
     return events.map((event) => {
-      const dateObj = new Date(event.date);
+      // Parse YYYY-MM-DD without timezone shifts
+      const [y, m, d] = event.date.split("-").map(Number);
+      const dateObj = new Date(y, m - 1, d);
       dateObj.setHours(0, 0, 0, 0);
       return { ...event, dateObj };
     });
@@ -199,10 +202,7 @@ export default function EventCalendar({ events }: Props) {
           </p>
         ) : (
           upcomingEvents.map((event) => {
-            const formattedDate = new Date(event.date).toLocaleDateString(
-              "en-IN",
-              { day: "numeric", month: "long", year: "numeric" }
-            );
+            const formattedDate = formatDateDisplay(event.date);
 
             return (
               <Link key={event.slug} href={`/events/${event.slug}`}>
@@ -227,7 +227,9 @@ export default function EventCalendar({ events }: Props) {
           <div className="pt-10 border-t border-white/10">
             <h4 className="mb-4">
               Events on{" "}
-              {selectedDate.toLocaleDateString("en-IN")}
+              {formatDateDisplay(
+                `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`
+              )}
             </h4>
 
             {eventsOnSelected.length === 0 ? (

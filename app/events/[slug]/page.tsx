@@ -1,4 +1,4 @@
-import { getEventBySlug, getAllEvents } from "@/lib/events";
+import { getEventBySlug, getAllEvents, formatDateDisplay } from "@/lib/events";
 import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
@@ -17,13 +17,7 @@ export default function EventPage({
 
   if (!event) return notFound();
 
-  const formattedDate = event.date
-    ? new Date(event.date).toLocaleDateString("en-IN", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      })
-    : "Date TBA";
+  const formattedDate = formatDateDisplay(event.date);
 
   return (
     <main className="min-h-screen bg-black text-white px-6 py-24">
