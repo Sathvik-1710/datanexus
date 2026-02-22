@@ -7,7 +7,7 @@ export default function Events() {
   const today = new Date();
 
   const pastEvents = events.filter(
-    (event) => new Date(event.date) < today
+    (event) => new Date(event.date).getTime() < today.getTime()
   );
 
   return (
@@ -42,29 +42,39 @@ export default function Events() {
             </p>
           ) : (
             <div className="grid md:grid-cols-3 gap-12">
-              {pastEvents.map((event) => (
-                <Link key={event.slug} href={`/events/${event.slug}`}>
-                  <div className="group border border-[#1F1F1F] rounded-3xl overflow-hidden hover:border-white transition">
+              {pastEvents.map((event) => {
+                const formattedDate = event.date
+                  ? new Date(event.date).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })
+                  : "Date TBA";
 
-                    {/* Placeholder Image */}
-                    <div className="h-60 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] flex items-center justify-center">
-                      <span className="text-gray-600 text-sm">
-                        Event Image
-                      </span>
+                return (
+                  <Link key={event.slug} href={`/events/${event.slug}`}>
+                    <div className="group border border-[#1F1F1F] rounded-3xl overflow-hidden hover:border-white transition cursor-pointer">
+
+                      {/* Placeholder Image */}
+                      <div className="h-60 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] flex items-center justify-center">
+                        <span className="text-gray-600 text-sm">
+                          Event Image
+                        </span>
+                      </div>
+
+                      <div className="p-6">
+                        <h3 className="text-lg font-semibold">
+                          {event.title}
+                        </h3>
+                        <p className="text-gray-500 text-sm mt-2">
+                          {formattedDate}
+                        </p>
+                      </div>
+
                     </div>
-
-                    <div className="p-6">
-                      <h3 className="text-lg font-semibold">
-                        {event.title}
-                      </h3>
-                      <p className="text-gray-500 text-sm mt-2">
-                        {event.date}
-                      </p>
-                    </div>
-
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           )}
         </section>
