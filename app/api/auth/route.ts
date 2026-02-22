@@ -5,11 +5,14 @@ export async function GET() {
     const { client_id, scope } = getOAuthConfig();
 
     if (!client_id) {
-        // Detailed error for easier debugging
+        // This will now show us ALL available keys (names only) so we can see what you named them.
+        const allKeys = Object.keys(process.env);
+
         return NextResponse.json({
-            error: "GITHUB_CLIENT_ID is missing from the environment",
-            hint: "Check Vercel Settings -> Environment Variables. Ensure GITHUB_CLIENT_ID is set for Production/Preview.",
-            env_keys: Object.keys(process.env).filter(k => k.includes('GITHUB'))
+            error: "No Client ID found in environment",
+            attempted_names: ["GITHUB_CLIENT_ID", "OAUTH_CLIENT_ID", "CLIENT_ID"],
+            available_env_vars: allKeys.filter(k => !k.startsWith('__') && !k.startsWith('NODE_')),
+            hint: "Go to Vercel -> Settings -> Environment Variables. Ensure the key is named exactly 'GITHUB_CLIENT_ID' and that you clicked 'REDEPLOY' after saving."
         }, { status: 500 });
     }
 

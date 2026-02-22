@@ -1,7 +1,20 @@
 export function getOAuthConfig() {
+  const env = process.env;
+
+  // Try to find the ID in various common formats
+  const client_id = env.GITHUB_CLIENT_ID ||
+    env.NEXT_PUBLIC_GITHUB_CLIENT_ID ||
+    env.OAUTH_CLIENT_ID ||
+    env.CLIENT_ID;
+
+  const client_secret = env.GITHUB_CLIENT_SECRET ||
+    env.NEXT_PUBLIC_GITHUB_CLIENT_SECRET ||
+    env.OAUTH_CLIENT_SECRET ||
+    env.CLIENT_SECRET;
+
   return {
-    client_id: process.env.GITHUB_CLIENT_ID,
-    client_secret: process.env.GITHUB_CLIENT_SECRET,
+    client_id: client_id?.trim(),
+    client_secret: client_secret?.trim(),
     scope: "repo,user",
   };
 }
