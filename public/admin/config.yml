@@ -2,8 +2,8 @@ backend:
   name: github
   repo: Sathvik-1710/datanexus
   branch: main
-  base_url: "" # Empty means it will use the current domain
-  auth_endpoint: api/auth # Paths are relative to base_url
+  base_url: https://datanexus-three.vercel.app
+  auth_endpoint: api/auth
 
 media_folder: "public/images/uploads"
 public_folder: "/images/uploads"
