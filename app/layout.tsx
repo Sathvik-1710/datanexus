@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import PageLoader from "@/components/PageLoader";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -15,13 +16,7 @@ export const metadata: Metadata = {
   },
   description:
     "Official website of Data Nexus — the student-led tech club of the Department of Data Science, JBREC.",
-  icons: {
-    icon: [
-      { url: "/favicon.png", type: "image/png" },
-    ],
-    shortcut: "/favicon.png",
-    apple: "/favicon.png",
-  },
+  // app/icon.png is auto-detected by Next.js — no explicit icons config needed
 };
 
 export default function RootLayout({
@@ -32,9 +27,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geist.className} bg-black text-white`}>
-        <Navbar />
-        {children}
-        <Footer />
+        <PageLoader>
+          <Navbar />
+          {children}
+          <Footer />
+        </PageLoader>
       </body>
     </html>
   );
