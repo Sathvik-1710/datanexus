@@ -11,7 +11,10 @@ export type EventType = {
   title: string;
   /** Date in YYYY-MM-DD format */
   date: string;
+  /** Primary image (first of images array, for cards/thumbnails) */
   image?: string;
+  /** All images for the carousel (up to 5) */
+  images: string[];
   description?: string;
 };
 
@@ -74,14 +77,22 @@ export function getAllEvents(): EventType[] {
 
       const { data, content } = matter(fileContents);
 
+      // Multi-image: `images` list widget stores an array of strings.
+      // Fall back to wrapping the legacy single `image` field.
+      const rawImages: unknown = data.images;
+      const imagesArr: string[] = Array.isArray(rawImages)
+        ? (rawImages as string[]).filter(Boolean)
+        : [];
+
+      const legacyImage = (data.image as string | undefined)?.trim();
+      if (imagesArr.length === 0 && legacyImage) imagesArr.push(legacyImage);
+
       return {
         slug,
         title: data.title || "Untitled Event",
         date: toDateOnly(data.date),
-        // CMS saves image as a frontmatter field — use it directly
-        image: data.image || undefined,
-        // CMS saves description as a frontmatter field (widget: "text").
-        // Fall back to markdown body content for manually written files.
+        image: imagesArr[0] || undefined,
+        images: imagesArr,
         description: (data.description as string | undefined)?.trim()
           || content.trim()
           || undefined,

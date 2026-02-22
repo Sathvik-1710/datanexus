@@ -1,8 +1,8 @@
 import { getEventBySlug, formatDateDisplay } from "@/lib/events";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import EventCarousel from "@/components/EventCarousel";
 
-// Force dynamic so CMS-created events work immediately without rebuilding
 export const dynamic = "force-dynamic";
 
 export default async function EventPage({
@@ -37,16 +37,9 @@ export default async function EventPage({
           <p className="text-gray-400 text-lg">{formattedDate}</p>
         </section>
 
-        {/* Hero Image — only render if image path looks like a real image file */}
-        {event.image && isImageUrl(event.image) && (
-          <div className="w-full rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={event.image}
-              alt={event.title}
-              className="w-full max-h-[500px] object-cover"
-            />
-          </div>
+        {/* Image carousel (1–5 images) */}
+        {event.images.length > 0 && (
+          <EventCarousel images={event.images} title={event.title} />
         )}
 
         {/* Description */}
@@ -66,17 +59,4 @@ export default async function EventPage({
       </div>
     </main>
   );
-}
-
-/**
- * Simple server-side check: only pass URLs that look like direct image files
- * or paths starting with / (local uploads). Avoids trying to render webpage
- * URLs as images.
- */
-function isImageUrl(url: string): boolean {
-  if (!url) return false;
-  // Local uploads from CMS (e.g., /images/uploads/photo.jpg)
-  if (url.startsWith("/")) return true;
-  // External direct image URLs
-  return /\.(jpg|jpeg|png|webp|gif|avif|svg)(\?.*)?$/i.test(url);
 }
