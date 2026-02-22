@@ -42,7 +42,7 @@ const focusAreas = [
   },
 ];
 
-export default function HomeClient() {
+export default function HomeClient({ tagline }: { tagline: string }) {
   return (
     <>
       {/* ─── HERO ─── */}
@@ -75,7 +75,7 @@ export default function HomeClient() {
           transition={{ delay: 0.3, duration: 0.8 }}
           className="mt-6 text-zinc-400 max-w-xl text-lg leading-relaxed"
         >
-          A student-led initiative driving innovation in Data Science, AI, and modern technology.
+          {tagline}
         </motion.p>
 
         <motion.div

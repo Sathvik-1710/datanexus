@@ -4,23 +4,27 @@ import StatsSection from "@/components/StatsSection";
 import { getAllEvents } from "@/lib/events";
 import { getTeamMembers } from "@/lib/team";
 import { getFacultyMembers } from "@/lib/faculty";
+import { getSiteSettings } from "@/lib/settings";
+
+// Always render fresh — reflects CMS changes without waiting for a redeploy
+export const dynamic = "force-dynamic";
 
 export default function Home() {
-  // Compute stats server-side from CMS content
   const events = getAllEvents();
   const team = getTeamMembers();
   const faculty = getFacultyMembers();
+  const settings = getSiteSettings();
 
   const stats = [
-    { label: "Events", value: events.length },
+    { label: "Events Hosted", value: events.length },
     { label: "Team Members", value: team.length },
     { label: "Faculty", value: faculty.length },
-    { label: "Years Active", value: 1, suffix: "+" },
+    { label: "Years Active", value: settings.years_active, suffix: "+" },
   ];
 
   return (
     <main className="bg-black text-white">
-      <HomeClient />
+      <HomeClient tagline={settings.tagline} />
       <StatsSection stats={stats} />
       <FacultySection />
     </main>

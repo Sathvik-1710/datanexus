@@ -56,3 +56,48 @@ collections:
       - { label: "Photo", name: "photo", widget: "image", required: false }
       - { label: "Is HOD", name: "isHOD", widget: "boolean", default: false, required: false, hint: "Check if this person is HOD (appears first)" }
       - { label: "Order", name: "order", widget: "number", required: false, hint: "Display order among non-HOD faculty (lower = first)" }
+
+  # ── Site-wide settings (singleton) ──────────────────────────────────────
+  - name: "settings"
+    label: "Site Settings"
+    files:
+      - name: "general"
+        label: "General Settings"
+        file: "content/settings/general.md"
+        fields:
+          - label: "Club Tagline"
+            name: "tagline"
+            widget: "string"
+            hint: "Short description shown in the hero section"
+            default: "A student-led initiative driving innovation in Data Science, AI, and modern technology."
+
+          - label: "Years Active"
+            name: "years_active"
+            widget: "number"
+            default: 1
+            hint: "How many years the club has been running (shown in the stats counter)"
+
+          - label: "Founded Year"
+            name: "founded_year"
+            widget: "number"
+            default: 2024
+            hint: "Year the club was founded"
+
+          - label: "Instagram URL"
+            name: "instagram"
+            widget: "string"
+            required: false
+            hint: "Full Instagram profile URL"
+
+          - label: "LinkedIn URL"
+            name: "linkedin"
+            widget: "string"
+            required: false
+            hint: "Full LinkedIn page URL"
+
+          - label: "GitHub URL"
+            name: "github"
+            widget: "string"
+            required: false
+            hint: "Full GitHub organisation/profile URL"
+            default: "https://github.com/Sathvik-1710/datanexus"
