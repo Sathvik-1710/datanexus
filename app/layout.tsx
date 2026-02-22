@@ -40,6 +40,9 @@ export default function RootLayout({
             <a href="/team" className="hover:text-white transition">
               Team
             </a>
+            <a href="/faculty" className="hover:text-white transition">
+              Faculty
+            </a>
             <a href="/events" className="hover:text-white transition">
               Events
             </a>

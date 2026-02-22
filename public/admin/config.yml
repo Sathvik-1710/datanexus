@@ -12,9 +12,15 @@ collections:
     folder: "content/events"
     create: true
     slug: "{{slug}}"
+    identifier_field: title
+    summary: "{{title}} — {{date}}"
     fields:
       - { label: "Title", name: "title", widget: "string" }
-      - { label: "Date", name: "date", widget: "date", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - label: "Date"
+        name: "date"
+        widget: "string"
+        pattern: ["^\\d{4}-\\d{2}-\\d{2}$", "Must be in YYYY-MM-DD format (e.g. 2026-03-15)"]
+        hint: "Enter date as YYYY-MM-DD (e.g. 2026-03-15). The website will display it as '15 March 2026'."
       - { label: "Description", name: "description", widget: "text" }
       - { label: "Image", name: "image", widget: "image", required: false }
       - { label: "Order", name: "order", widget: "number", required: false, hint: "Optional display order (lower = first)" }
@@ -24,6 +30,8 @@ collections:
     folder: "content/team"
     create: true
     slug: "{{slug}}"
+    identifier_field: name
+    summary: "{{name}} — {{role}}"
     fields:
       - { label: "Name", name: "name", widget: "string" }
       - { label: "Role", name: "role", widget: "string" }
@@ -35,6 +43,8 @@ collections:
     folder: "content/faculty"
     create: true
     slug: "{{slug}}"
+    identifier_field: name
+    summary: "{{name}} — {{designation}}"
     fields:
       - { label: "Name", name: "name", widget: "string" }
       - { label: "Designation", name: "designation", widget: "string" }
