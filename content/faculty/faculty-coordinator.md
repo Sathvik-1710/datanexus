@@ -1,5 +1,5 @@
 ---
-name: RACHAMALLA SUSMITHA
+name: RACHAMALLA SUSMITHA Asst Professor
 designation: Faculty Coordinator
 photo: /images/uploads/sushmitha-mam-.jpeg
 isHOD: false
