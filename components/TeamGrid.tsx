@@ -42,47 +42,51 @@ export default function TeamGrid({ members }: { members: TeamMember[] }) {
                         transition={{ delay: i * 0.08, duration: 0.5 }}
                         whileHover={{ y: -6, scale: 1.02 }}
                         onClick={() => setSelected(member)}
-                        className="group bg-white/[0.03] border border-white/10 hover:border-white/30 hover:bg-white/[0.06] rounded-3xl p-8 transition-all duration-300 cursor-pointer"
+                        className="group bg-white/[0.03] border border-white/10 hover:border-white/30 hover:bg-white/[0.06] rounded-3xl overflow-hidden transition-all duration-300 cursor-pointer"
                     >
-                        {/* Photo */}
-                        <div className="w-24 h-24 mx-auto rounded-2xl bg-white/10 mb-6 overflow-hidden flex items-center justify-center border border-white/5 group-hover:border-white/20 transition">
+                        {/* Full-width photo */}
+                        <div className="w-full h-64 bg-white/5 overflow-hidden">
                             {member.photo ? (
-                                <img src={member.photo} alt={member.name} className="w-full h-full object-cover" loading="lazy" />
+                                <img
+                                    src={member.photo}
+                                    alt={member.name}
+                                    className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                                    loading="lazy"
+                                />
                             ) : (
-                                <span className="text-3xl font-bold text-white/20">
-                                    {member.name ? member.name[0].toUpperCase() : "?"}
-                                </span>
+                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-white/5 to-white/[0.02]">
+                                    <span className="text-6xl font-bold text-white/10">
+                                        {member.name ? member.name[0].toUpperCase() : "?"}
+                                    </span>
+                                </div>
                             )}
                         </div>
 
-                        {/* Info */}
-                        <div className="text-center space-y-1">
-                            <h2 className="text-lg font-semibold text-white">{member.name || "TBA"}</h2>
+                        {/* Card footer */}
+                        <div className="p-6 space-y-1">
+                            <h2 className="text-base font-semibold text-white">{member.name || "TBA"}</h2>
                             <p className="text-gray-400 text-sm">{member.role}</p>
-                            {member.bio && (
-                                <p className="text-gray-600 text-xs mt-2 line-clamp-2">{member.bio}</p>
+
+                            {/* LinkedIn on card */}
+                            {member.linkedin && (
+                                <div className="pt-3">
+                                    <a
+                                        href={member.linkedin}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 hover:border-[#0A66C2]/60 hover:bg-[#0A66C2]/10 transition text-xs text-gray-400 hover:text-[#0A66C2]"
+                                        aria-label={`${member.name} on LinkedIn`}
+                                    >
+                                        <LinkedInIcon />
+                                        <span>LinkedIn</span>
+                                    </a>
+                                </div>
                             )}
                         </div>
 
-                        {/* LinkedIn button on card */}
-                        {member.linkedin && (
-                            <div className="mt-5 flex justify-center">
-                                <a
-                                    href={member.linkedin}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 hover:border-[#0A66C2]/60 hover:bg-[#0A66C2]/10 transition text-xs text-gray-400 hover:text-[#0A66C2]"
-                                    aria-label={`${member.name} on LinkedIn`}
-                                >
-                                    <LinkedInIcon />
-                                    <span>LinkedIn</span>
-                                </a>
-                            </div>
-                        )}
-
-                        {/* Hover underline */}
-                        <div className="mt-4 h-[1px] bg-white/20 w-0 group-hover:w-full mx-auto transition-all duration-500" />
+                        {/* Bottom scan line on hover */}
+                        <div className="h-[1px] bg-white/20 w-0 group-hover:w-full transition-all duration-500 -mt-1" />
                     </motion.div>
                 ))}
             </div>
