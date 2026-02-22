@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 
 const geist = Geist({
@@ -20,12 +19,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geist.className} bg-black text-white`}>
-        
-        {/* Netlify Identity Script */}
-        <Script
-          src="https://identity.netlify.com/v1/netlify-identity-widget.js"
-          strategy="beforeInteractive"
-        />
 
         {/* Navbar */}
         <nav className="flex justify-between items-center px-8 py-6 border-b border-[#1F1F1F]">
