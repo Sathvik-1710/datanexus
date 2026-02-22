@@ -1,5 +1,5 @@
 ---
-name: ""
+name: "Faculty Member"
 designation: "Faculty Coordinator"
 photo: ""
 isHOD: false

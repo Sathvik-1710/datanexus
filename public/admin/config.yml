@@ -12,19 +12,16 @@ collections:
     create: true
     slug: "{{slug}}"
     identifier_field: "title"
-    summary: "{{title}} — {{date}}"
+    summary: "{{title}} ({{date}})"
     fields:
       - { label: "Title", name: "title", widget: "string" }
 
-      # IMPORTANT: Your deployed Netlify CMS bundle doesn't support widget: "date".
-      # Use string with validation; store as YYYY-MM-DD.
+      # IMPORTANT: Use widget: "string" as "date"/"datetime" might be unsupported in this bundle
       - label: "Date (YYYY-MM-DD)"
         name: "date"
         widget: "string"
         hint: "Enter as YYYY-MM-DD (e.g., 2026-03-15). Website displays 15 March 2026."
-        pattern:
-          - "^\\d{4}-\\d{2}-\\d{2}$"
-          - "Use format YYYY-MM-DD (e.g., 2026-03-15)."
+        pattern: ["^\\d{4}-\\d{2}-\\d{2}$", "Use format YYYY-MM-DD (e.g., 2026-03-15)."]
 
       - { label: "Description", name: "description", widget: "text" }
       - { label: "Image", name: "image", widget: "image", required: false }
@@ -36,7 +33,7 @@ collections:
     create: true
     slug: "{{slug}}"
     identifier_field: "name"
-    summary: "{{name}} — {{role}}"
+    summary: "{{name}} ({{role}})"
     fields:
       - { label: "Name", name: "name", widget: "string" }
       - { label: "Role", name: "role", widget: "string" }
@@ -49,7 +46,7 @@ collections:
     create: true
     slug: "{{slug}}"
     identifier_field: "name"
-    summary: "{{name}} — {{designation}}"
+    summary: "{{name}} ({{designation}})"
     fields:
       - { label: "Name", name: "name", widget: "string" }
       - { label: "Designation", name: "designation", widget: "string" }
