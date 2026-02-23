@@ -12,12 +12,6 @@ import type { FacultyMember } from "@/lib/faculty";
 const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!<>-_\\\\/[]{}—=+*^?#";
 
 function ScrambleTitle({ text }: { text: string }) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   let globalIndex = 0;
 
   return (
@@ -33,7 +27,6 @@ function ScrambleTitle({ text }: { text: string }) {
                   key={currentIdx}
                   char={char}
                   index={currentIdx}
-                  mounted={mounted}
                 />
               );
             })}
@@ -44,57 +37,49 @@ function ScrambleTitle({ text }: { text: string }) {
   );
 }
 
-function ScrambleLetter({ char, index, mounted }: { char: string; index: number; mounted: boolean }) {
+function ScrambleLetter({ char, index }: { char: string; index: number }) {
   const [display, setDisplay] = useState(char);
   const [isLocked, setIsLocked] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    if (!mounted) return;
-
     let interval: NodeJS.Timeout;
 
-    // Trigger fade-in stagger natively
-    const visTimeout = setTimeout(() => {
-      setIsVisible(true);
-    }, index * 60 + 50);
-
-    // Start scrambling
+    // Slight delay before scramble starts
     const startTimeout = setTimeout(() => {
       interval = setInterval(() => {
         setDisplay(CHARS[Math.floor(Math.random() * CHARS.length)]);
       }, 40);
-    }, index * 20);
+    }, index * 20 + 200);
 
     // Lock correct letter
     const lockTimeout = setTimeout(() => {
       clearInterval(interval);
       setDisplay(char);
       setIsLocked(true);
-    }, 700 + index * 90);
+    }, 900 + index * 90);
 
     return () => {
       clearTimeout(startTimeout);
       clearTimeout(lockTimeout);
-      clearTimeout(visTimeout);
       clearInterval(interval);
     };
-  }, [mounted, index, char]);
+  }, [index, char]);
 
   return (
-    <span
-      style={{
-        ...gradientText,
-        transform: isVisible ? "translateY(0)" : "translateY(25px)",
-        opacity: isVisible ? 1 : 0,
-        filter: isVisible ? "blur(0px)" : "blur(8px)",
-        transition: "all 0.7s cubic-bezier(0.16, 1, 0.3, 1)",
+    <motion.span
+      initial={{ opacity: 0, y: 35, filter: "blur(8px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      transition={{
+        duration: 0.9,
+        delay: index * 0.05,
+        ease: [0.16, 1, 0.3, 1],
       }}
-      className={`inline-block ${isLocked ? "text-white" : "text-white/50"
+      style={gradientText}
+      className={`inline-block transition-colors duration-500 ${isLocked ? "text-white" : "text-white/40"
         }`}
     >
       {display}
-    </span>
+    </motion.span>
   );
 }
 
@@ -198,25 +183,6 @@ export default function HomeClient({
 }) {
   const heroRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Scroll-driven parallax for hero content
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.65], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.55], [1, 0.9]);
-  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
-
-  if (!mounted) {
-    return <div className="min-h-screen bg-black" />;
-  }
 
   return (
     /* ── Apple-style outer scroll container ── */
@@ -252,8 +218,8 @@ export default function HomeClient({
         />
 
         {/* Hero content */}
-        <motion.div
-          style={{ opacity: heroOpacity, scale: heroScale, y: heroY, zIndex: 10 }}
+        <div
+          style={{ zIndex: 10 }}
           className="relative flex flex-col items-center"
         >
           {/* Badge */}
@@ -301,14 +267,14 @@ export default function HomeClient({
               Meet The Team
             </Link>
           </motion.div>
-        </motion.div>
+        </div>
 
         {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.7 }}
-          style={{ opacity: heroOpacity, zIndex: 10, position: "absolute", bottom: "2.5rem" }}
+          style={{ zIndex: 10, position: "absolute", bottom: "2.5rem" }}
           className="flex flex-col items-center gap-2"
         >
           <div className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center p-1">
