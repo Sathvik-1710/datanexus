@@ -16,6 +16,13 @@ export default async function EventPage({
 
   if (!event) return notFound();
 
+  // Ensure the link is absolute (prevents it from being treated as a relative path)
+  const formatUrl = (url?: string) => {
+    if (!url) return "";
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    return `https://${url}`;
+  };
+
   const formattedDate = formatDateDisplay(event.date);
 
   return (
@@ -51,9 +58,9 @@ export default async function EventPage({
                 <h2 className="text-xl font-semibold text-white">About this Event</h2>
 
                 {event.link_url && (
-                  <a
-                    href={event.link_url}
-                    target="_blank"
+                  <a 
+                    href={formatUrl(event.link_url)} 
+                    target="_blank" 
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition shadow-lg shadow-blue-500/20"
                   >
@@ -72,7 +79,7 @@ export default async function EventPage({
 
               {event.link_url && (
                 <a
-                  href={event.link_url}
+                  href={formatUrl(event.link_url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition"

@@ -3,23 +3,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import {
-    Users,
-    Calendar,
-    Settings as SettingsIcon,
-    Plus,
-    Trash2,
-    Edit,
-    Download,
-    Save,
-    X,
-    Lock,
-    LogOut,
-    Image as ImageIcon,
-    ExternalLink,
-    ChevronRight,
-    Search,
-    CheckCircle2,
-    AlertCircle
+    Plus, X, Loader2, LogOut, LayoutDashboard, Users, Calendar, Download, Trash2,
+    Edit3 as Edit, Settings, Save, Search, FolderGit2, Trophy, Group, Lock,
+    Image as ImageIcon, ExternalLink, ChevronRight, CheckCircle2, AlertCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -44,6 +30,17 @@ type Event = {
     images: string[];
     description: string;
     link_url?: string;
+};
+
+type Project = {
+    id: string;
+    slug: string;
+    title: string;
+    description: string;
+    github_url?: string;
+    linkedin_url?: string;
+    live_url?: string;
+    images: string[];
 };
 
 type TeamMember = {
@@ -80,7 +77,7 @@ type SiteSettings = {
 export default function SuperAdminPanel() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState("");
-    const [activeTab, setActiveTab] = useState<"registrations" | "events" | "team" | "faculty" | "settings">("registrations");
+    const [activeTab, setActiveTab] = useState<"registrations" | "events" | "projects" | "team" | "faculty" | "settings">("registrations");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [successMsg, setSuccessMsg] = useState("");
@@ -88,6 +85,7 @@ export default function SuperAdminPanel() {
     // Data States
     const [registrations, setRegistrations] = useState<Registration[]>([]);
     const [events, setEvents] = useState<Event[]>([]);
+    const [projects, setProjects] = useState<Project[]>([]);
     const [team, setTeam] = useState<TeamMember[]>([]);
     const [faculty, setFaculty] = useState<FacultyMember[]>([]);
     const [settings, setSettings] = useState<SiteSettings | null>(null);
@@ -127,18 +125,22 @@ export default function SuperAdminPanel() {
             } else if (activeTab === "events") {
                 const { data } = await supabase.from('events').select('*').order('date', { ascending: false });
                 setEvents(data || []);
+            } else if (activeTab === 'projects') {
+                const { data } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
+                setProjects(data || []);
             } else if (activeTab === "team") {
                 const { data } = await supabase.from('team').select('*').order('order', { ascending: true });
                 setTeam(data || []);
             } else if (activeTab === "faculty") {
-                const { data } = await supabase.from('faculty').select('*').order('is_hod', { ascending: false }).order('order', { ascending: true });
+                const { data } = await supabase.from('faculty').select('*').order('order', { ascending: true });
                 setFaculty(data || []);
             } else if (activeTab === "settings") {
-                const { data } = await supabase.from('settings').select('*').eq('id', 'general').single();
-                setSettings(data);
+                const { data } = await supabase.from('settings').select('*');
+                setSettings(data?.[0] || null);
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error("Fetch error:", err);
+            setError(err.message);
         } finally {
             setLoading(false);
         }
@@ -220,7 +222,8 @@ export default function SuperAdminPanel() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         path: activeTab === 'events' ? '/events' :
-                            activeTab === 'team' ? '/team' : '/'
+                            activeTab === 'projects' ? '/projects' :
+                                activeTab === 'team' ? '/team' : '/'
                     })
                 });
             } catch (revalErr) {
@@ -381,10 +384,11 @@ export default function SuperAdminPanel() {
 
                 <nav className="flex flex-col gap-2">
                     <NavItem active={activeTab === 'registrations'} icon={<Users size={18} />} label="Registrations" onClick={() => setActiveTab('registrations')} />
-                    <NavItem active={activeTab === 'events'} icon={<Calendar size={18} />} label="Manage Events" onClick={() => setActiveTab('events')} />
-                    <NavItem active={activeTab === 'team'} icon={<Users size={18} />} label="Core Team" onClick={() => setActiveTab('team')} />
-                    <NavItem active={activeTab === 'faculty'} icon={<Users size={18} />} label="Faculty" onClick={() => setActiveTab('faculty')} />
-                    <NavItem active={activeTab === 'settings'} icon={<SettingsIcon size={18} />} label="Site Settings" onClick={() => setActiveTab('settings')} />
+                    <NavItem active={activeTab === 'events'} icon={<Calendar size={18} />} label="Events" onClick={() => setActiveTab('events')} />
+                    <NavItem active={activeTab === 'projects'} icon={<FolderGit2 size={18} />} label="Project Showcase" onClick={() => setActiveTab('projects')} />
+                    <NavItem active={activeTab === 'team'} icon={<Group size={18} />} label="Team" onClick={() => setActiveTab('team')} />
+                    <NavItem active={activeTab === 'faculty'} icon={<Trophy size={18} />} label="Faculty" onClick={() => setActiveTab('faculty')} />
+                    <NavItem active={activeTab === 'settings'} icon={<Settings size={18} />} label="Site Settings" onClick={() => setActiveTab('settings')} />
                 </nav>
 
                 <div className="mt-auto pt-8 border-t border-white/10">
@@ -436,6 +440,7 @@ export default function SuperAdminPanel() {
                         <div className="space-y-6">
                             {activeTab === 'registrations' && <RegistrationsTable data={registrations} />}
                             {activeTab === 'events' && <EventsGrid data={events} onEdit={(ev: Event) => { setEditingItem(ev); setIsModalOpen(true); }} onDelete={handleDelete} />}
+                            {activeTab === 'projects' && <ProjectsGrid data={projects} onEdit={(it: Project) => { setEditingItem(it); setIsModalOpen(true); }} onDelete={handleDelete} />}
                             {activeTab === 'team' && <GenericTable data={team} onEdit={(it: TeamMember) => { setEditingItem(it); setIsModalOpen(true); }} onDelete={handleDelete} type="team" />}
                             {activeTab === 'faculty' && <GenericTable data={faculty} onEdit={(it: FacultyMember) => { setEditingItem(it); setIsModalOpen(true); }} onDelete={handleDelete} type="faculty" />}
                             {activeTab === 'settings' && <SettingsForm initialData={settings} onSave={fetchAllData} />}
@@ -474,6 +479,18 @@ export default function SuperAdminPanel() {
                                         <FileUploader label="Event Images" name="images" defaultValue={editingItem?.images} multiple={true} />
                                         <Input label="Event Resource / Registration Link" name="link_url" defaultValue={editingItem?.link_url} placeholder="e.g. Google Docs, Form, or Hackathon link" />
                                         <TextArea label="Description" name="description" defaultValue={editingItem?.description} />
+                                    </>
+                                )}
+
+                                {activeTab === 'projects' && (
+                                    <>
+                                        <Input label="Project Title" name="title" defaultValue={editingItem?.title} required />
+                                        <Input label="URL Slug" name="slug" defaultValue={editingItem?.slug} required />
+                                        <Input label="GitHub Repo Link" name="github_url" defaultValue={editingItem?.github_url} />
+                                        <Input label="LinkedIn/Post Link" name="linkedin_url" defaultValue={editingItem?.linkedin_url} />
+                                        <Input label="Live Demo Link" name="live_url" defaultValue={editingItem?.live_url} />
+                                        <FileUploader label="Project Showcase (Carousel Images)" name="images" defaultValue={editingItem?.images} multiple={true} />
+                                        <TextArea label="Project Description" name="description" defaultValue={editingItem?.description} />
                                     </>
                                 )}
 
@@ -577,6 +594,33 @@ function RegistrationsTable({ data }: { data: Registration[] }) {
                     ))}
                 </tbody>
             </table>
+        </div>
+    );
+}
+
+function ProjectsGrid({ data, onEdit, onDelete }: any) {
+    if (data.length === 0) return <div className="p-12 text-center text-gray-500 bg-white/[0.02] border border-dashed border-white/10 rounded-3xl">No projects in the showcase yet. Add one to get started!</div>;
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {data.map((it: any) => (
+                <div key={it.id} className="bg-white/[0.02] border border-white/10 rounded-3xl overflow-hidden hover:border-blue-500/30 transition group">
+                    <div className="h-48 bg-white/5 relative">
+                        {it.images?.[0] ? (
+                            <img src={it.images[0]} className="w-full h-full object-cover" />
+                        ) : (
+                            <div className="flex items-center justify-center h-full text-gray-600"><ImageIcon size={40} /></div>
+                        )}
+                        <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition">
+                            <button onClick={() => onEdit(it)} className="p-2 bg-black/50 backdrop-blur-md rounded-lg text-white hover:bg-blue-600 transition"><Edit size={16} /></button>
+                            <button onClick={() => onDelete(it.id)} className="p-2 bg-black/50 backdrop-blur-md rounded-lg text-white hover:bg-red-600 transition"><Trash2 size={16} /></button>
+                        </div>
+                    </div>
+                    <div className="p-6">
+                        <h4 className="font-bold text-lg">{it.title}</h4>
+                        <p className="text-gray-500 text-sm mt-1 line-clamp-2">{it.description}</p>
+                    </div>
+                </div>
+            ))}
         </div>
     );
 }
