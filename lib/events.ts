@@ -8,6 +8,7 @@ export type EventType = {
   image?: string;
   images: string[];
   description?: string;
+  link_url?: string;
 };
 
 export { formatDateDisplay } from './dateUtils';
@@ -57,7 +58,8 @@ export async function getAllEvents(): Promise<EventType[]> {
       date: event.date,
       image: event.images?.[0] || undefined,
       images: event.images || [],
-      description: event.description
+      description: event.description,
+      link_url: event.link_url
     }));
   } catch (err) {
     console.error('Unexpected error fetching events:', err);

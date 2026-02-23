@@ -46,15 +46,40 @@ export default async function EventPage({
 
           {/* Description */}
           {event.description ? (
-            <section className="border border-white/10 rounded-3xl p-8 backdrop-blur-xl bg-white/5">
-              <h2 className="text-xl font-semibold mb-4 text-white">About this Event</h2>
+            <section className="border border-white/10 rounded-3xl p-8 backdrop-blur-xl bg-white/5 space-y-6">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <h2 className="text-xl font-semibold text-white">About this Event</h2>
+
+                {event.link_url && (
+                  <a
+                    href={event.link_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition shadow-lg shadow-blue-500/20"
+                  >
+                    External Link →
+                  </a>
+                )}
+              </div>
+
               <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">
                 {event.description}
               </p>
             </section>
           ) : (
-            <section className="border border-white/10 rounded-3xl p-8 backdrop-blur-xl bg-white/5">
+            <section className="border border-white/10 rounded-3xl p-8 backdrop-blur-xl bg-white/5 flex flex-col md:flex-row md:items-center justify-between gap-6">
               <p className="text-gray-500 italic">No description available yet.</p>
+
+              {event.link_url && (
+                <a
+                  href={event.link_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition"
+                >
+                  External Link →
+                </a>
+              )}
             </section>
           )}
 
