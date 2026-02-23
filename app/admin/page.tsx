@@ -204,6 +204,7 @@ export default function SuperAdminPanel() {
             });
 
             // --- DATABASE PERSISTENCE ---
+            console.log("SENDING TO DATABASE:", cleanData);
             const conflictCol = cleanData.id ? 'id' : 'slug';
             const { error: dbError } = await supabase.from(activeTab).upsert(cleanData, { onConflict: activeTab === 'settings' ? 'id' : conflictCol });
 
@@ -243,20 +244,27 @@ export default function SuperAdminPanel() {
        IMAGE UPLOAD HELPER
        ────────────────────────────────────────────────────────────────────────── */
     async function uploadImage(file: File) {
+        setLoading(true);
         const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-        const filePath = `${activeTab}/${fileName}`;
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        console.log(`Attempting upload to 'uploads' bucket: ${filePath}`);
 
         const { error: uploadError, data } = await supabase.storage
             .from('uploads')
             .upload(filePath, file);
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+            console.error("Supabase Upload Error:", uploadError);
+            throw uploadError;
+        }
 
         const { data: { publicUrl } } = supabase.storage
             .from('uploads')
             .getPublicUrl(filePath);
 
+        console.log("Upload Success! Public URL:", publicUrl);
         return publicUrl;
     }
 
@@ -280,8 +288,8 @@ export default function SuperAdminPanel() {
                 setUrls(multiple ? newUrls : [newUrls[newUrls.length - 1]]);
                 showSuccess("Image uploaded successfully.");
             } catch (err: any) {
-                setError("Upload failed. Ensure you created 'uploads' bucket in Supabase and set it to Public.");
-                console.error(err);
+                setError(`Upload failed: ${err.message || "Unknown error"}. Ensure 'uploads' bucket exists and is Public.`);
+                console.error("Full Upload Error:", err);
             } finally {
                 setUploading(false);
             }
