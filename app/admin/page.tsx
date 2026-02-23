@@ -472,7 +472,7 @@ export default function SuperAdminPanel() {
                                         <Input label="URL Slug" name="slug" defaultValue={editingItem?.slug} placeholder="e.g. ai-workshop-2026" required />
                                         <Input label="Date" name="date" type="date" defaultValue={editingItem?.date} required />
                                         <FileUploader label="Event Images" name="images" defaultValue={editingItem?.images} multiple={true} />
-                                        <Input label="Event Link (Optional)" name="link_url" defaultValue={editingItem?.link_url} placeholder="e.g. https://registration-link.com" />
+                                        <Input label="Event Resource / Registration Link" name="link_url" defaultValue={editingItem?.link_url} placeholder="e.g. Google Docs, Form, or Hackathon link" />
                                         <TextArea label="Description" name="description" defaultValue={editingItem?.description} />
                                     </>
                                 )}
