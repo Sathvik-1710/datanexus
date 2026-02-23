@@ -174,8 +174,27 @@ export default function SuperAdminPanel() {
                 (data as any).is_hod = data.is_hod === "on";
             }
 
-            const { error } = await supabase.from(activeTab).upsert(data, { onConflict: activeTab === 'settings' ? 'id' : 'slug' });
+            // Determine conflict column
+            // We use 'id' if it exists in the data, otherwise fall back to slug
+            let conflictCol = 'slug';
+            if (activeTab === 'settings') conflictCol = 'id';
+            else if (data.id) conflictCol = 'id';
+
+            const { error } = await supabase.from(activeTab).upsert(data, { onConflict: conflictCol });
             if (error) throw error;
+
+            // Trigger Next.js revalidation so changes appear instantly on the live site
+            try {
+                await fetch('/api/revalidate', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        path: activeTab === 'events' ? '/events' :
+                            activeTab === 'team' ? '/team' : '/'
+                    })
+                });
+            } catch (revalErr) {
+                console.warn("Revalidation trigger failed, but data was saved.");
+            }
 
             showSuccess("Changes saved instantly.");
             setIsModalOpen(false);
@@ -410,6 +429,9 @@ export default function SuperAdminPanel() {
                             </div>
 
                             <form onSubmit={handleSave} className="space-y-6">
+                                {/* Hidden ID for updates */}
+                                {editingItem?.id && <input type="hidden" name="id" value={editingItem.id} />}
+
                                 {activeTab === 'events' && (
                                     <>
                                         <Input label="Title" name="title" defaultValue={editingItem?.title} required />
