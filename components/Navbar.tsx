@@ -15,7 +15,7 @@ export default function Navbar() {
     const [open, setOpen] = useState(false);
 
     return (
-        <nav className="sticky top-0 z-50 flex justify-between items-center px-8 py-5 border-b border-white/10 backdrop-blur-xl bg-black/70">
+        <nav className="fixed w-full top-0 z-50 flex justify-between items-center px-8 py-5 border-b border-white/10 backdrop-blur-xl bg-black/70">
 
             {/* Logo */}
             <Link
@@ -36,8 +36,8 @@ export default function Navbar() {
                             key={href}
                             href={href}
                             className={`relative transition pb-1 ${isActive
-                                    ? "text-white after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-white"
-                                    : "text-gray-400 hover:text-white"
+                                ? "text-white after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-white"
+                                : "text-gray-400 hover:text-white"
                                 }`}
                         >
                             {label}

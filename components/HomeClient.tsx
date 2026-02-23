@@ -189,7 +189,7 @@ export default function HomeClient({
     <div
       ref={containerRef}
       style={{
-        height: "100vh",
+        height: "100dvh",
         overflowY: "scroll",
         scrollSnapType: "y mandatory",
         scrollBehavior: "smooth",
