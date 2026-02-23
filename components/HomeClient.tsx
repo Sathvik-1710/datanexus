@@ -350,6 +350,94 @@ export default function HomeClient({
       </section >
 
       {/* ══════════════════════════════════════
+          SECTION 2.5 — VISION & MISSION
+      ══════════════════════════════════════ */}
+      <section
+        className="relative min-h-[100dvh] md:min-h-screen flex flex-col justify-center items-center px-6 py-20 bg-black overflow-hidden md:snap-start md:snap-always"
+      >
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 55% at 50% 50%, rgba(30,60,90,0.06) 0%, transparent 70%)" }} />
+
+        <div className="relative z-10 max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-8 md:gap-12">
+          {/* Vision Card */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            className="group relative border border-white/10 rounded-[2.5rem] p-10 md:p-12 backdrop-blur-xl bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/20 transition-all duration-500 overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:scale-110 transition-transform duration-700">
+              <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </div>
+
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-white/70">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold">Our Vision</h2>
+            </div>
+            <p className="text-zinc-400 text-lg leading-relaxed">
+              To build a community of disciplined, skilled, and future-ready technologists who solve real-world problems through data-driven thinking, secure systems, and strong engineering practices.
+            </p>
+          </motion.div>
+
+          {/* Mission Card */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            className="group relative border border-white/10 rounded-[2.5rem] p-10 md:p-12 backdrop-blur-xl bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/20 transition-all duration-500 overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:scale-110 transition-transform duration-700">
+              <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22v-5" />
+                <path d="M9 7V2" />
+                <path d="M15 7V2" />
+                <path d="M12 13V7" />
+                <path d="M12 7H9" />
+                <path d="M12 7h3" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </div>
+
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-white/70">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22v-5" />
+                  <path d="M9 7V2" />
+                  <path d="M15 7V2" />
+                  <path d="M12 13V7" />
+                  <path d="M12 7H9" />
+                  <path d="M12 7h3" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold">Our Mission</h2>
+            </div>
+            <ul className="space-y-4">
+              {[
+                "Foster data-driven thinking for informed decision-making",
+                "Promote secure and reliable system design",
+                "Strengthen core engineering practices and teamwork",
+              ].map((point, idx) => (
+                <li key={idx} className="flex gap-4 items-start">
+                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-white/30 shrink-0" />
+                  <span className="text-zinc-400 leading-snug">{point}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </div>
+      </section >
+
+      {/* ══════════════════════════════════════
           SECTION 3 — STATS
       ══════════════════════════════════════ */}
       <section
