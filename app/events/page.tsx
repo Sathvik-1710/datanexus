@@ -1,6 +1,7 @@
 import EventCalendar from "@/components/EventCalendar";
 import { getAllEvents, categorizeEvents, formatDateDisplay } from "@/lib/events";
 import Link from "next/link";
+import Image from "next/image";
 import Footer from "@/components/Footer";
 import type { Metadata } from "next";
 
@@ -53,11 +54,14 @@ export default async function Events() {
                     <div className="group border border-[#1F1F1F] rounded-3xl overflow-hidden hover:border-white transition cursor-pointer">
 
                       {event.image ? (
-                        <img
-                          src={event.image}
-                          alt={event.title}
-                          className="h-60 w-full object-cover"
-                        />
+                        <div className="relative h-60 w-full">
+                          <Image
+                            src={event.image || "/placeholder.jpg"}
+                            alt={event.title || "Event Image"}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
                       ) : (
                         <div className="h-60 bg-[#111111] flex items-center justify-center">
                           <span className="text-gray-600 text-sm">
@@ -102,11 +106,15 @@ export default async function Events() {
                     <div className="group border border-[#1F1F1F] rounded-3xl overflow-hidden hover:border-white transition cursor-pointer">
 
                       {event.image ? (
-                        <img
-                          src={event.image}
-                          alt={event.title}
-                          className="h-60 w-full object-cover"
-                        />
+                        <div className="relative h-60 w-full">
+                          <Image
+                            src={event.image || "/placeholder.jpg"}
+                            alt={event.title || "Event Image"}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                          />
+                        </div>
                       ) : (
                         <div className="h-60 bg-[#111111] flex items-center justify-center">
                           <span className="text-gray-600 text-sm">

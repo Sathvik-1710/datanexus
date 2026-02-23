@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 type TeamMember = {
     slug: string;
@@ -45,13 +46,14 @@ export default function TeamGrid({ members }: { members: TeamMember[] }) {
                         className="group bg-white/[0.03] border border-white/10 hover:border-white/30 hover:bg-white/[0.06] rounded-3xl overflow-hidden transition-all duration-300 cursor-pointer"
                     >
                         {/* Full-width photo */}
-                        <div className="w-full h-64 bg-white/5 overflow-hidden">
+                        <div className="w-full h-64 bg-white/5 overflow-hidden relative">
                             {member.photo ? (
-                                <img
+                                <Image
                                     src={member.photo}
                                     alt={member.name}
-                                    className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                                    loading="lazy"
+                                    fill
+                                    className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                                    sizes="(max-width: 768px) 100vw, 33vw"
                                 />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-white/5 to-white/[0.02]">
@@ -119,12 +121,13 @@ export default function TeamGrid({ members }: { members: TeamMember[] }) {
                                 <div className="flex flex-col md:flex-row">
 
                                     {/* Photo panel */}
-                                    <div className="md:w-56 flex-shrink-0 bg-white/5">
+                                    <div className="md:w-56 flex-shrink-0 bg-white/5 relative h-64 md:h-auto">
                                         {selected.photo ? (
-                                            <img
+                                            <Image
                                                 src={selected.photo}
                                                 alt={selected.name}
-                                                className="w-full h-64 md:h-full object-cover"
+                                                fill
+                                                className="object-cover"
                                             />
                                         ) : (
                                             <div className="w-full h-64 md:h-full flex items-center justify-center">
