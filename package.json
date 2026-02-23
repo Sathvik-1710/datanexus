@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@netlify/plugin-nextjs": "^5.15.8",
+    "@supabase/supabase-js": "^2.97.0",
+    "dotenv": "^17.3.1",
     "framer-motion": "^12.34.3",
     "gray-matter": "^4.0.3",
     "next": "16.1.6",
