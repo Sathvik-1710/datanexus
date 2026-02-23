@@ -180,8 +180,6 @@ export default function SuperAdminPanel() {
                     ? rawImages.split(',').map((s: string) => s.trim()).filter(Boolean)
                     : rawImages;
 
-                // If the array is empty, we must send NULL or a valid PG array literal. 
-                // NULL is safest for optional arrays.
                 cleanData.images = (Array.isArray(imgArray) && imgArray.length > 0) ? imgArray : null;
             }
 

@@ -51,9 +51,13 @@ export default async function ProjectDetailPage({
                         </div>
                     </section>
 
-                    {project.images.length > 0 && (
+                    {project.images && project.images.length > 0 ? (
                         <div className="rounded-3xl overflow-hidden border border-white/10">
                             <EventCarousel images={project.images} title={project.title} />
+                        </div>
+                    ) : (
+                        <div className="h-64 bg-white/5 rounded-3xl border border-dashed border-white/10 flex items-center justify-center text-gray-500">
+                            Project Showcase (No images uploaded yet)
                         </div>
                     )}
 
