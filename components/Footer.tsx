@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BrandLogo from "./BrandLogo";
 
 const socialLinks = [
     {
@@ -38,9 +39,9 @@ export default function Footer() {
             <div className="max-w-6xl mx-auto px-8 py-16 grid md:grid-cols-3 gap-12">
 
                 {/* Brand */}
-                <div className="space-y-3">
-                    <p className="text-xl font-semibold tracking-widest text-white">DATA NEXUS</p>
-                    <p className="text-gray-500 text-sm leading-relaxed">
+                <div className="space-y-4">
+                    <BrandLogo />
+                    <p className="text-gray-400 text-sm leading-relaxed">
                         Student-led initiative of the Department of Data Science,<br />
                         Joginpally B.R. Engineering College (UGC Autonomous).
                     </p>
@@ -48,7 +49,7 @@ export default function Footer() {
 
                 {/* Quick Links */}
                 <div className="space-y-3">
-                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-4">Quick Links</p>
+                    <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-4">Quick Links</p>
                     <div className="flex flex-col gap-3">
                         {[
                             { href: "/", label: "Home" },
@@ -59,7 +60,7 @@ export default function Footer() {
                             <Link
                                 key={href}
                                 href={href}
-                                className="text-gray-400 hover:text-white text-sm transition"
+                                className="text-gray-500 hover:text-white font-medium text-sm transition"
                             >
                                 {label}
                             </Link>
@@ -69,7 +70,7 @@ export default function Footer() {
 
                 {/* Socials */}
                 <div className="space-y-3">
-                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-4">Find Us</p>
+                    <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-4">Find Us</p>
                     <div className="flex flex-col gap-4">
                         {socialLinks.map(({ label, href, icon }) => (
                             <a
@@ -77,7 +78,7 @@ export default function Footer() {
                                 href={href}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-3 text-gray-400 hover:text-white text-sm transition group"
+                                className="flex items-center gap-3 text-gray-500 font-medium hover:text-white text-sm transition group"
                             >
                                 <span className="group-hover:scale-110 transition">{icon}</span>
                                 {label}
@@ -89,9 +90,9 @@ export default function Footer() {
             </div>
 
             {/* Bottom bar */}
-            <div className="border-t border-white/5 px-8 py-5 flex flex-col md:flex-row justify-between items-center gap-2">
-                <p className="text-gray-600 text-xs">© {year} Data Nexus. All rights reserved.</p>
-                <p className="text-gray-600 text-xs">Department of Data Science · JBREC</p>
+            <div className="border-t border-white/10 px-8 py-5 flex flex-col md:flex-row justify-between items-center gap-2">
+                <p className="text-gray-500 font-medium text-xs">© {year} Data Nexus. All rights reserved.</p>
+                <p className="text-gray-500 font-medium text-xs">Department of Data Science · JBREC</p>
             </div>
         </footer>
     );

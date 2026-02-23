@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import BrandLogo from "./BrandLogo";
 
 const navLinks = [
     { href: "/", label: "Home" },
@@ -17,15 +18,15 @@ export default function Navbar() {
     const [open, setOpen] = useState(false);
 
     return (
-        <nav className="fixed w-full top-0 z-50 flex justify-between items-center px-8 py-5 border-b border-white/10 backdrop-blur-xl bg-black/70">
+        <nav className="fixed w-full top-0 z-50 flex justify-between items-center px-8 py-5 border-b border-white/10 backdrop-blur-xl bg-black/20">
 
             {/* Logo */}
             <Link
                 href="/"
-                className="text-xl font-semibold tracking-widest hover:opacity-80 transition"
+                className="hover:opacity-80 transition"
                 onClick={() => setOpen(false)}
             >
-                DATA NEXUS
+                <BrandLogo />
             </Link>
 
             {/* Desktop links */}
@@ -38,7 +39,7 @@ export default function Navbar() {
                             key={href}
                             href={href}
                             className={`relative transition pb-1 ${isActive
-                                ? "text-white after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-white"
+                                ? "text-white font-semibold after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-sky-500 after:rounded-full"
                                 : "text-gray-400 hover:text-white"
                                 }`}
                         >
@@ -79,7 +80,7 @@ export default function Navbar() {
                                 key={href}
                                 href={href}
                                 onClick={() => setOpen(false)}
-                                className={`text-lg transition ${isActive ? "text-white font-medium" : "text-gray-400"
+                                className={`text-lg transition ${isActive ? "text-white font-bold" : "text-gray-400 font-medium"
                                     }`}
                             >
                                 {label}

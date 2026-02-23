@@ -261,8 +261,6 @@ export default function HomeClient({
             </Link>
           </motion.div>
         </div>
-
-
       </section >
 
       {/* ══════════════════════════════════════
@@ -580,9 +578,9 @@ export default function HomeClient({
       {/* ══════════════════════════════════════
           SECTION 6 — FOOTER
       ══════════════════════════════════════ */}
-      <section className="md:snap-start md:snap-always">
+      <section className="md:snap-start md:snap-always" >
         <Footer />
-      </section>
+      </section >
     </div >
   );
 }

@@ -26,7 +26,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${geist.className} bg-black text-white`}>
+      <body className={`${geist.className} bg-black text-white selection:bg-orange-500/30 selection:text-orange-100 overflow-x-hidden`}>
         {/* Global cursor glow */}
         <CursorGlow />
         <PageLoader>
