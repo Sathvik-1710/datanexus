@@ -26,8 +26,12 @@ export function categorizeEvents(events: EventType[]): CategorizedEvents {
   const todayIST = getTodayIST();
   return {
     today: events.filter((e) => e.date === todayIST),
-    upcoming: events.filter((e) => e.date > todayIST),
-    past: events.filter((e) => e.date < todayIST),
+    upcoming: events
+      .filter((e) => e.date > todayIST)
+      .sort((a, b) => a.date.localeCompare(b.date)),
+    past: events
+      .filter((e) => e.date < todayIST)
+      .sort((a, b) => a.date.localeCompare(b.date)),
   };
 }
 
