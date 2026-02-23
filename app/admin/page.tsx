@@ -170,6 +170,32 @@ export default function SuperAdminPanel() {
         }
     }
 
+    /* ──────────────────────────────────────────────────────────────────────────
+       IMAGE UPLOAD HELPER
+       ────────────────────────────────────────────────────────────────────────── */
+    async function uploadImage(file: File) {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        console.log(`Uploading file to storage: ${filePath}`);
+
+        const { error: uploadError } = await supabase.storage
+            .from('uploads')
+            .upload(filePath, file);
+
+        if (uploadError) {
+            console.error("Storage Error:", uploadError);
+            throw uploadError;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+            .from('uploads')
+            .getPublicUrl(filePath);
+
+        return publicUrl;
+    }
+
     async function handleSave(e: React.FormEvent) {
         e.preventDefault();
         setLoading(true);
@@ -178,44 +204,41 @@ export default function SuperAdminPanel() {
         try {
             const formData = new FormData(e.currentTarget as HTMLFormElement);
             const rawData = Object.fromEntries(formData) as any;
-
-            // --- STRICT DATA NORMALIZATION FOR POSTGRESQL ---
             const cleanData: any = { ...rawData };
 
-            // 1. Handle Images Array (Critical fix for "malformed array literal")
+            // --- UNIVERSAL IMAGE NORMALIZATION ---
+            // Fix for 'images' (Array)
             if (cleanData.images !== undefined) {
-                const rawImages = cleanData.images || "";
-                const imgArray = typeof rawImages === 'string'
-                    ? rawImages.split(',').map((s: string) => s.trim()).filter(Boolean)
-                    : rawImages;
-
-                cleanData.images = (Array.isArray(imgArray) && imgArray.length > 0) ? imgArray : null;
+                const raw = cleanData.images || "";
+                const arr = typeof raw === 'string'
+                    ? raw.split(',').map((s: string) => s.trim()).filter(Boolean)
+                    : raw;
+                cleanData.images = (Array.isArray(arr) && arr.length > 0) ? arr : null;
             }
 
-            // 2. Handle ID (Remove if empty to let PG generate a UUID)
-            if (!cleanData.id || cleanData.id === "" || cleanData.id === "undefined") {
-                delete cleanData.id;
+            // Fix for 'photo' (Single String)
+            if (cleanData.photo !== undefined) {
+                cleanData.photo = cleanData.photo === "" ? null : cleanData.photo;
             }
 
-            // 3. Handle Boolean (HOD Status)
-            if (cleanData.is_hod !== undefined) {
-                cleanData.is_hod = cleanData.is_hod === "on" || cleanData.is_hod === "true";
-            }
-
-            // 4. Handle Numeric Fields
+            // --- DATA CLEANUP ---
+            if (!cleanData.id || cleanData.id === "" || cleanData.id === "undefined") delete cleanData.id;
+            if (cleanData.is_hod !== undefined) cleanData.is_hod = cleanData.is_hod === "on" || cleanData.is_hod === "true";
             if (cleanData.order) cleanData.order = parseInt(cleanData.order) || 0;
             if (cleanData.years_active) cleanData.years_active = parseInt(cleanData.years_active) || 0;
             if (cleanData.founded_year) cleanData.founded_year = parseInt(cleanData.founded_year) || 0;
 
-            // 5. Global Empty String Cleanup
+            // Global Empty String Cleanup
             Object.keys(cleanData).forEach(key => {
                 if (cleanData[key] === "") cleanData[key] = null;
             });
 
-            // --- DATABASE PERSISTENCE ---
-            console.log("SENDING TO DATABASE:", cleanData);
+            console.log("FINAL DATA TO SAVE:", cleanData);
+
             const conflictCol = cleanData.id ? 'id' : 'slug';
-            const { error: dbError } = await supabase.from(activeTab).upsert(cleanData, { onConflict: activeTab === 'settings' ? 'id' : conflictCol });
+            const { error: dbError } = await supabase.from(activeTab).upsert(cleanData, {
+                onConflict: activeTab === 'settings' ? 'id' : conflictCol
+            });
 
             if (dbError) {
                 console.error("Supabase Save Error:", dbError);
@@ -223,7 +246,7 @@ export default function SuperAdminPanel() {
                 throw dbError;
             }
 
-            // --- CACHE REVALIDATION ---
+            // --- CACHE REFRESH ---
             try {
                 await fetch('/api/revalidate', {
                     method: 'POST',
@@ -234,9 +257,7 @@ export default function SuperAdminPanel() {
                                 activeTab === 'team' ? '/team' : '/'
                     })
                 });
-            } catch (revalErr) {
-                console.warn("Cache revalidation timed out (this is fine, data is saved).");
-            }
+            } catch (revalErr) { /* ignore reval timeout */ }
 
             showSuccess("Changes saved successfully!");
             setIsModalOpen(false);
@@ -244,35 +265,10 @@ export default function SuperAdminPanel() {
             fetchAllData();
         } catch (err: any) {
             setError(err.message || "An unexpected error occurred.");
+            console.error("Save Error:", err);
         } finally {
             setLoading(false);
         }
-    }
-
-    /* ──────────────────────────────────────────────────────────────────────────
-       IMAGE UPLOAD HELPER
-       ────────────────────────────────────────────────────────────────────────── */
-    async function uploadImage(file: File) {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-        const filePath = `${fileName}`;
-
-        console.log(`Uploading to Supabase: ${filePath}`);
-
-        const { error: uploadError } = await supabase.storage
-            .from('uploads')
-            .upload(filePath, file);
-
-        if (uploadError) {
-            console.error("Supabase Storage Error:", uploadError);
-            throw uploadError;
-        }
-
-        const { data: { publicUrl } } = supabase.storage
-            .from('uploads')
-            .getPublicUrl(filePath);
-
-        return publicUrl;
     }
 
     function FileUploader({ label, name, defaultValue, multiple = false }: { label: string, name: string, defaultValue?: string | string[], multiple?: boolean }) {
