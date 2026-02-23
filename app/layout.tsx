@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
+import NavbarSwitch from "@/components/NavbarSwitch";
 import PageLoader from "@/components/PageLoader";
 import CursorGlow from "@/components/CursorGlow";
 
@@ -30,7 +30,7 @@ export default function RootLayout({
         {/* Global cursor glow */}
         <CursorGlow />
         <PageLoader>
-          <Navbar />
+          <NavbarSwitch />
           {children}
         </PageLoader>
       </body>

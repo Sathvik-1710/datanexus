@@ -1,10 +1,7 @@
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
-
-const teamDirectory = path.join(process.cwd(), "content/team");
+import { supabase } from './supabase';
 
 export type TeamMember = {
+  id: string;
   slug: string;
   name: string;
   role: string;
@@ -14,36 +11,33 @@ export type TeamMember = {
   order?: number;
 };
 
-export function getTeamMembers(): TeamMember[] {
-  if (!fs.existsSync(teamDirectory)) {
+/**
+ * Fetch all team members from Supabase database
+ */
+export async function getTeamMembers(): Promise<TeamMember[]> {
+  try {
+    const { data, error } = await supabase
+      .from('team')
+      .select('*')
+      .order('order', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching team from Supabase:', error);
+      return [];
+    }
+
+    return (data || []).map(member => ({
+      id: member.id,
+      slug: member.slug,
+      name: member.name,
+      role: member.role,
+      photo: member.photo,
+      bio: member.bio,
+      linkedin: member.linkedin,
+      order: member.order
+    }));
+  } catch (err) {
+    console.error('Unexpected error fetching team members:', err);
     return [];
   }
-
-  const fileNames = fs.readdirSync(teamDirectory);
-
-  const members = fileNames
-    .filter((f) => f.endsWith(".md"))
-    .map((fileName) => {
-      const slug = fileName.replace(/\.md$/, "");
-      const fullPath = path.join(teamDirectory, fileName);
-      const fileContents = fs.readFileSync(fullPath, "utf8");
-      const { data } = matter(fileContents);
-
-      return {
-        slug,
-        name: data.name || "",
-        role: data.role || "",
-        photo: data.photo || "",
-        bio: (data.bio as string | undefined)?.trim() || undefined,
-        linkedin: (data.linkedin as string | undefined) || undefined,
-        order: typeof data.order === "number" ? data.order : undefined,
-      };
-    });
-
-  // Sort by `order` field (ascending); members without order go last
-  return members.sort((a, b) => {
-    const ao = a.order ?? Infinity;
-    const bo = b.order ?? Infinity;
-    return ao - bo;
-  });
 }

@@ -7,11 +7,13 @@ import { getSiteSettings } from "@/lib/settings";
 // Always render fresh — reflects CMS changes without waiting for a redeploy
 export const dynamic = "force-dynamic";
 
-export default function Home() {
-  const events = getAllEvents();
-  const team = getTeamMembers();
-  const faculty = getFacultyMembers();
-  const settings = getSiteSettings();
+export default async function Home() {
+  const [events, team, faculty, settings] = await Promise.all([
+    getAllEvents(),
+    getTeamMembers(),
+    getFacultyMembers(),
+    getSiteSettings()
+  ]);
 
   const stats = [
     { label: "Events Hosted", value: events.length },

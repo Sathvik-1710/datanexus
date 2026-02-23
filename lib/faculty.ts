@@ -1,10 +1,7 @@
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
-
-const facultyDirectory = path.join(process.cwd(), "content/faculty");
+import { supabase } from './supabase';
 
 export type FacultyMember = {
+  id: string;
   slug: string;
   name: string;
   designation: string;
@@ -13,36 +10,33 @@ export type FacultyMember = {
   order?: number;
 };
 
-export function getFacultyMembers(): FacultyMember[] {
-  if (!fs.existsSync(facultyDirectory)) {
+/**
+ * Fetch all faculty members from Supabase database
+ */
+export async function getFacultyMembers(): Promise<FacultyMember[]> {
+  try {
+    const { data, error } = await supabase
+      .from('faculty')
+      .select('*')
+      .order('is_hod', { ascending: false })
+      .order('order', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching faculty from Supabase:', error);
+      return [];
+    }
+
+    return (data || []).map(member => ({
+      id: member.id,
+      slug: member.slug,
+      name: member.name,
+      designation: member.designation,
+      photo: member.photo,
+      isHOD: member.is_hod,
+      order: member.order
+    }));
+  } catch (err) {
+    console.error('Unexpected error fetching faculty:', err);
     return [];
   }
-
-  const fileNames = fs.readdirSync(facultyDirectory);
-
-  const members = fileNames
-    .filter((f) => f.endsWith(".md"))
-    .map((fileName) => {
-      const slug = fileName.replace(/\.md$/, "");
-      const fullPath = path.join(facultyDirectory, fileName);
-      const fileContents = fs.readFileSync(fullPath, "utf8");
-      const { data } = matter(fileContents);
-
-      return {
-        slug,
-        name: data.name || "",
-        designation: data.designation || "",
-        photo: data.photo || "",
-        isHOD: data.isHOD === true,
-        order: typeof data.order === "number" ? data.order : undefined,
-      };
-    });
-
-  // HOD first, then sorted by `order` (ascending), unordered members go last
-  return members.sort((a, b) => {
-    if (a.isHOD !== b.isHOD) return a.isHOD ? -1 : 1;
-    const ao = a.order ?? Infinity;
-    const bo = b.order ?? Infinity;
-    return ao - bo;
-  });
 }

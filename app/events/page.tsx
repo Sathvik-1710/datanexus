@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default function Events() {
-  const events = getAllEvents();
+export default async function Events() {
+  const events = await getAllEvents();
   const { upcoming: upcomingEvents, past: pastEvents } =
     categorizeEvents(events);
 

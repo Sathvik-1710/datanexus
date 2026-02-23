@@ -1,22 +1,16 @@
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
-
-export { formatDateDisplay } from "./dateUtils";
-
-const eventsDirectory = path.join(process.cwd(), "content/events");
+import { supabase } from './supabase';
 
 export type EventType = {
+  id: string;
   slug: string;
   title: string;
-  /** Date in YYYY-MM-DD format */
   date: string;
-  /** Primary image (first of images array, for cards/thumbnails) */
   image?: string;
-  /** All images for the carousel (up to 5) */
   images: string[];
   description?: string;
 };
+
+export { formatDateDisplay } from './dateUtils';
 
 export type CategorizedEvents = {
   today: EventType[];
@@ -24,34 +18,10 @@ export type CategorizedEvents = {
   past: EventType[];
 };
 
-/**
- * Normalise whatever gray-matter gives us (Date object or string) to
- * a YYYY-MM-DD string without timezone shifts.
- */
-function toDateOnly(raw: unknown): string {
-  if (!raw) return "";
-  // gray-matter may parse a YAML date as a JS Date (UTC midnight).
-  if (raw instanceof Date) {
-    const y = raw.getUTCFullYear();
-    const m = String(raw.getUTCMonth() + 1).padStart(2, "0");
-    const d = String(raw.getUTCDate()).padStart(2, "0");
-    return `${y}-${m}-${d}`;
-  }
-  // Otherwise take only the date portion of whatever string was stored.
-  return String(raw).slice(0, 10);
-}
-
-/**
- * Returns today's date as YYYY-MM-DD in Asia/Kolkata (IST) timezone.
- */
 export function getTodayIST(): string {
   return new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
 }
 
-/**
- * Splits an array of events into today / upcoming / past buckets
- * using IST date boundaries.
- */
 export function categorizeEvents(events: EventType[]): CategorizedEvents {
   const todayIST = getTodayIST();
   return {
@@ -61,49 +31,37 @@ export function categorizeEvents(events: EventType[]): CategorizedEvents {
   };
 }
 
-export function getAllEvents(): EventType[] {
-  if (!fs.existsSync(eventsDirectory)) {
+/**
+ * Fetch all events from Supabase database
+ */
+export async function getAllEvents(): Promise<EventType[]> {
+  try {
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .order('date', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching events from Supabase:', error);
+      return [];
+    }
+
+    return (data || []).map(event => ({
+      id: event.id,
+      slug: event.slug,
+      title: event.title,
+      date: event.date,
+      image: event.images?.[0] || undefined,
+      images: event.images || [],
+      description: event.description
+    }));
+  } catch (err) {
+    console.error('Unexpected error fetching events:', err);
     return [];
   }
-
-  const fileNames = fs.readdirSync(eventsDirectory);
-
-  const events = fileNames
-    .filter((f) => f.endsWith(".md"))
-    .map((fileName) => {
-      const slug = fileName.replace(/\.md$/, "");
-      const fullPath = path.join(eventsDirectory, fileName);
-      const fileContents = fs.readFileSync(fullPath, "utf8");
-
-      const { data, content } = matter(fileContents);
-
-      // Multi-image: `images` list widget stores an array of strings.
-      // Fall back to wrapping the legacy single `image` field.
-      const rawImages: unknown = data.images;
-      const imagesArr: string[] = Array.isArray(rawImages)
-        ? (rawImages as string[]).filter(Boolean)
-        : [];
-
-      const legacyImage = (data.image as string | undefined)?.trim();
-      if (imagesArr.length === 0 && legacyImage) imagesArr.push(legacyImage);
-
-      return {
-        slug,
-        title: data.title || "Untitled Event",
-        date: toDateOnly(data.date),
-        image: imagesArr[0] || undefined,
-        images: imagesArr,
-        description: (data.description as string | undefined)?.trim()
-          || content.trim()
-          || undefined,
-      };
-    });
-
-  // Sort newest first (lexicographic comparison works for YYYY-MM-DD)
-  return events.sort((a, b) => b.date.localeCompare(a.date));
 }
 
-export function getEventBySlug(slug: string): EventType | undefined {
-  const events = getAllEvents();
+export async function getEventBySlug(slug: string): Promise<EventType | undefined> {
+  const events = await getAllEvents();
   return events.find((event) => event.slug === slug);
 }
