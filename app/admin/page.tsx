@@ -435,7 +435,7 @@ export default function SuperAdminPanel() {
                                         <Input label="Full Name" name="name" defaultValue={editingItem?.name} required />
                                         <Input label="URL Name" name="slug" defaultValue={editingItem?.slug} required />
                                         <Input label="Designation / Role" name="role" defaultValue={editingItem?.role} required />
-                                        <FileUploader label="Profile Photo" name="photo" defaultValue={editingItem?.photo} onUploadStart={() => setIsUploadingFile(true)} onUploadEnd={() => setIsUploadingFile(false)} onSuccess={showSuccess} onError={setError} hint="Recommended: Portrait (4:5) or Square (1:1). Faces should be near the top center." />
+                                        <FileUploader label="Profile Photo" name="photo" defaultValue={editingItem?.photo} onUploadStart={() => setIsUploadingFile(true)} onUploadEnd={() => setIsUploadingFile(false)} onSuccess={showSuccess} onError={setError} hint="Recommended: 1:1 Square (e.g., 500x500). Photos will be cropped into perfect circles." />
                                         <Input label="LinkedIn URL" name="linkedin" defaultValue={editingItem?.linkedin} />
                                         <Input label="Sort Order" name="order" type="number" defaultValue={editingItem?.order || 0} />
                                         <TextArea label="Short Bio" name="bio" defaultValue={editingItem?.bio} />

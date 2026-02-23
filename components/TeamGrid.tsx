@@ -45,46 +45,48 @@ export default function TeamGrid({ members }: { members: TeamMember[] }) {
                         onClick={() => setSelected(member)}
                         className="group bg-white/[0.03] border border-white/10 hover:border-white/30 hover:bg-white/[0.06] rounded-3xl overflow-hidden transition-all duration-300 cursor-pointer"
                     >
-                        {/* Full-width photo */}
-                        <div className="w-full h-64 bg-white/5 overflow-hidden relative">
-                            {member.photo ? (
-                                <Image
-                                    src={member.photo}
-                                    alt={member.name}
-                                    fill
-                                    className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                                    sizes="(max-width: 768px) 100vw, 33vw"
-                                />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-white/5 to-white/[0.02]">
-                                    <span className="text-6xl font-bold text-white/10">
-                                        {member.name ? member.name[0].toUpperCase() : "?"}
-                                    </span>
-                                </div>
-                            )}
-                        </div>
+                        <div className="flex flex-col items-center p-8 text-center">
+                            {/* Circular photo */}
+                            <div className="w-32 h-32 rounded-full overflow-hidden relative border-[3px] border-white/5 bg-white/5 flex-shrink-0 mb-5">
+                                {member.photo ? (
+                                    <Image
+                                        src={member.photo}
+                                        alt={member.name}
+                                        fill
+                                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                                        sizes="128px"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-white/5 to-white/[0.02]">
+                                        <span className="text-5xl font-bold text-white/10">
+                                            {member.name ? member.name[0].toUpperCase() : "?"}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
 
-                        {/* Card footer */}
-                        <div className="p-6 space-y-1">
-                            <h2 className="text-base font-semibold text-white">{member.name || "TBA"}</h2>
-                            <p className="text-gray-400 text-sm">{member.role}</p>
+                            {/* Card footer */}
+                            <div className="space-y-1">
+                                <h2 className="text-lg font-semibold text-white tracking-wide">{member.name || "TBA"}</h2>
+                                <p className="text-blue-400 text-sm font-medium">{member.role}</p>
 
-                            {/* LinkedIn on card */}
-                            {member.linkedin && (
-                                <div className="pt-3">
-                                    <a
-                                        href={member.linkedin}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        onClick={(e) => e.stopPropagation()}
-                                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 hover:border-[#0A66C2]/60 hover:bg-[#0A66C2]/10 transition text-xs text-gray-400 hover:text-[#0A66C2]"
-                                        aria-label={`${member.name} on LinkedIn`}
-                                    >
-                                        <LinkedInIcon />
-                                        <span>LinkedIn</span>
-                                    </a>
-                                </div>
-                            )}
+                                {/* LinkedIn on card */}
+                                {member.linkedin && (
+                                    <div className="pt-4 flex justify-center">
+                                        <a
+                                            href={member.linkedin}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 hover:border-[#0A66C2]/60 hover:bg-[#0A66C2]/10 transition text-xs text-gray-400 hover:text-[#0A66C2]"
+                                            aria-label={`${member.name} on LinkedIn`}
+                                        >
+                                            <LinkedInIcon />
+                                            <span>LinkedIn</span>
+                                        </a>
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {/* Bottom scan line on hover */}
@@ -117,71 +119,68 @@ export default function TeamGrid({ members }: { members: TeamMember[] }) {
                             transition={{ type: "spring", stiffness: 320, damping: 28 }}
                             className="fixed inset-0 z-50 flex items-center justify-center p-6 pointer-events-none"
                         >
-                            <div className="pointer-events-auto w-full max-w-2xl bg-[#0d0d0d] border border-white/15 rounded-3xl shadow-2xl overflow-hidden">
-                                <div className="flex flex-col md:flex-row">
+                            <div className="pointer-events-auto w-full max-w-lg bg-[#0d0d0d] border border-white/15 rounded-3xl shadow-2xl overflow-hidden relative p-8 flex flex-col items-center text-center">
+                                {/* Close button */}
+                                <button
+                                    onClick={() => setSelected(null)}
+                                    aria-label="Close"
+                                    className="absolute top-5 right-5 text-gray-500 hover:text-white transition text-xl leading-none"
+                                >
+                                    ✕
+                                </button>
 
-                                    {/* Photo panel */}
-                                    <div className="md:w-56 flex-shrink-0 bg-white/5 relative h-64 md:h-auto">
-                                        {selected.photo ? (
-                                            <Image
-                                                src={selected.photo}
-                                                alt={selected.name}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-64 md:h-full flex items-center justify-center">
-                                                <span className="text-7xl font-bold text-white/10">
-                                                    {selected.name?.[0]?.toUpperCase() ?? "?"}
-                                                </span>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="flex-1 p-8 space-y-4 relative">
-                                        {/* Close button */}
-                                        <button
-                                            onClick={() => setSelected(null)}
-                                            aria-label="Close"
-                                            className="absolute top-5 right-5 text-gray-500 hover:text-white transition text-xl leading-none"
-                                        >
-                                            ✕
-                                        </button>
-
-                                        {/* Name + LinkedIn */}
-                                        <div className="flex items-center gap-3 pr-8">
-                                            <h2 className="text-2xl font-bold tracking-wide uppercase">
-                                                {selected.name}
-                                            </h2>
-                                            {selected.linkedin && (
-                                                <a
-                                                    href={selected.linkedin}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-[#0A66C2] hover:opacity-80 transition flex-shrink-0"
-                                                    aria-label="LinkedIn"
-                                                >
-                                                    <LinkedInIcon />
-                                                </a>
-                                            )}
+                                {/* Photo panel */}
+                                <div className="w-40 h-40 rounded-full overflow-hidden relative border-4 border-white/10 bg-white/5 flex-shrink-0 mb-6 mt-4">
+                                    {selected.photo ? (
+                                        <Image
+                                            src={selected.photo}
+                                            alt={selected.name}
+                                            fill
+                                            className="object-cover"
+                                            sizes="160px"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center">
+                                            <span className="text-6xl font-bold text-white/10">
+                                                {selected.name?.[0]?.toUpperCase() ?? "?"}
+                                            </span>
                                         </div>
+                                    )}
+                                </div>
 
-                                        {/* Role */}
-                                        <p className="text-gray-400 text-sm">{selected.role}</p>
-
-                                        {/* Bio */}
-                                        {selected.bio ? (
-                                            <p className="text-gray-300 text-sm leading-relaxed border-t border-white/10 pt-4">
-                                                {selected.bio}
-                                            </p>
-                                        ) : (
-                                            <p className="text-gray-600 text-sm border-t border-white/10 pt-4 italic">
-                                                No bio added yet.
-                                            </p>
+                                {/* Content */}
+                                <div className="space-y-4 w-full">
+                                    {/* Name + LinkedIn */}
+                                    <div className="flex flex-col items-center gap-2">
+                                        <h2 className="text-3xl font-bold tracking-wide uppercase">
+                                            {selected.name}
+                                        </h2>
+                                        {selected.linkedin && (
+                                            <a
+                                                href={selected.linkedin}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-[#0A66C2] hover:opacity-80 transition inline-flex items-center gap-2 text-sm mt-1"
+                                                aria-label="LinkedIn"
+                                            >
+                                                <LinkedInIcon /> View on LinkedIn
+                                            </a>
                                         )}
                                     </div>
 
+                                    {/* Role */}
+                                    <p className="text-blue-400 font-medium">{selected.role}</p>
+
+                                    {/* Bio */}
+                                    {selected.bio ? (
+                                        <p className="text-gray-300 text-sm leading-relaxed border-t border-white/10 pt-4 mt-4">
+                                            {selected.bio}
+                                        </p>
+                                    ) : (
+                                        <p className="text-gray-600 text-sm border-t border-white/10 pt-4 mt-4 italic">
+                                            No bio added yet.
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>
