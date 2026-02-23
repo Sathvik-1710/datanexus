@@ -35,11 +35,10 @@ export default function JoinPage() {
         const formData = new FormData(e.currentTarget);
         const data = Object.fromEntries(formData);
 
-        // Roll number validation: JBREC roll numbers generally contain '67' in the 3rd and 4th position
-        // e.g., 21671A0501. Allow some flexibility but enforce the "67" code strictly.
+        // 10 digit alphanumeric format (e.g. 21671A0501, or lateral entry variants)
         const rollNo = data.rollNo as string;
-        if (!rollNo.match(/^[a-zA-Z0-9]{2}67[a-zA-Z0-9]{6}$/i)) {
-            setErrorMessage("Invalid Roll Number. You must be a JBREC student (College Code: 67) to join.");
+        if (!rollNo.match(/^[a-zA-Z0-9]{10}$/i)) {
+            setErrorMessage("Invalid Roll Number. Standard JBREC roll numbers are exactly 10 alphanumeric characters.");
             setStatus("error");
             return;
         }

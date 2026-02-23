@@ -8,9 +8,9 @@ export async function POST(req: Request) {
 
         // Secondary strictly enforced validation on the backend
         const rollNo = data.rollNo || "";
-        if (!rollNo.match(/^[a-zA-Z0-9]{2}67[a-zA-Z0-9]{6}$/i)) {
+        if (!rollNo.match(/^[a-zA-Z0-9]{10}$/i)) {
             return NextResponse.json(
-                { error: "Invalid Roll Number. JBREC roll numbers must have '67' as the 3rd and 4th character." },
+                { error: "Invalid Roll Number. Roll numbers must be exactly 10 alphanumeric characters." },
                 { status: 400 }
             );
         }
