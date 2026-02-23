@@ -75,7 +75,7 @@ function ScrambleLetter({ char, index }: { char: string; index: number }) {
         ease: [0.16, 1, 0.3, 1],
       }}
       style={gradientText}
-      className={`inline-block transition-colors duration-500 ${isLocked ? "text-slate-900" : "text-slate-300"
+      className={`inline-block transition-colors duration-500 ${isLocked ? "text-white" : "text-white/40"
         }`}
     >
       {display}
@@ -84,7 +84,7 @@ function ScrambleLetter({ char, index }: { char: string; index: number }) {
 }
 
 const gradientText: React.CSSProperties = {
-  background: "linear-gradient(135deg, #0ea5e9 0%, #a855f7 40%, #f97316 100%)",
+  background: "linear-gradient(170deg, #ffffff 0%, rgba(255,255,255,0.45) 100%)",
   WebkitBackgroundClip: "text",
   WebkitTextFillColor: "transparent",
   backgroundClip: "text",
@@ -141,8 +141,8 @@ const focusAreas = [
         <circle cx="19" cy="17" r="1" />
       </svg>
     ),
-    gradient: "from-sky-500/20 to-blue-500/10",
-    iconColor: "text-sky-400",
+    gradient: "from-blue-500/20 to-violet-500/10",
+    iconColor: "text-blue-300",
   },
   {
     title: "Web Development",
@@ -154,8 +154,8 @@ const focusAreas = [
         <line x1="12" y1="2" x2="12" y2="22" opacity="0.4" />
       </svg>
     ),
-    gradient: "from-orange-500/20 to-amber-500/10",
-    iconColor: "text-orange-400",
+    gradient: "from-emerald-500/20 to-teal-500/10",
+    iconColor: "text-emerald-300",
   },
   {
     title: "Data Security",
@@ -166,8 +166,8 @@ const focusAreas = [
         <polyline points="9 12 11 14 15 10" />
       </svg>
     ),
-    gradient: "from-blue-500/20 to-orange-500/10",
-    iconColor: "text-blue-300",
+    gradient: "from-rose-500/20 to-orange-500/10",
+    iconColor: "text-rose-300",
   },
 ];
 
@@ -195,7 +195,7 @@ export default function HomeClient({
       ══════════════════════════════════════ */}
       <section
         ref={heroRef}
-        className="relative min-h-[100dvh] md:min-h-screen flex flex-col justify-center items-center text-center px-6 overflow-hidden bg-transparent md:snap-start md:snap-always"
+        className="relative min-h-[100dvh] md:min-h-screen flex flex-col justify-center items-center text-center px-6 overflow-hidden bg-black md:snap-start md:snap-always"
       >
         {/* Neural particle network */}
         <ParticleBackground />
@@ -206,7 +206,7 @@ export default function HomeClient({
           style={{
             zIndex: 1,
             background:
-              "radial-gradient(ellipse 75% 55% at 50% 50%, rgba(14,165,233,0.12) 0%, transparent 70%)",
+              "radial-gradient(ellipse 75% 55% at 50% 50%, rgba(60,90,255,0.08) 0%, transparent 70%)",
           }}
         />
 
@@ -220,7 +220,7 @@ export default function HomeClient({
             initial={{ opacity: 0, scale: 0.88 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-8 px-5 py-2 rounded-full border border-orange-500/20 bg-orange-50 text-[11px] text-orange-600 font-bold tracking-[0.25em] uppercase backdrop-blur-sm"
+            className="mb-8 px-5 py-2 rounded-full border border-white/15 bg-white/[0.06] text-[11px] text-gray-400 tracking-[0.25em] uppercase backdrop-blur-sm"
           >
             Department of Data Science · JBREC
           </motion.div>
@@ -235,7 +235,7 @@ export default function HomeClient({
             initial={{ opacity: 0, y: 35 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.95, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-7 text-slate-600 max-w-lg text-lg leading-relaxed"
+            className="mt-7 text-zinc-400 max-w-lg text-lg leading-relaxed"
           >
             {tagline}
           </motion.p>
@@ -249,13 +249,13 @@ export default function HomeClient({
           >
             <Link
               href="/events"
-              className="px-8 py-3.5 bg-slate-900 text-white rounded-full font-semibold text-sm hover:scale-105 hover:shadow-[0_10px_40px_rgba(249,115,22,0.3)] hover:bg-orange-500 transition-all duration-300"
+              className="px-8 py-3.5 bg-white text-black rounded-full font-semibold text-sm hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] transition-all duration-300"
             >
               Explore Events
             </Link>
             <Link
               href="/team"
-              className="px-8 py-3.5 border border-slate-300 rounded-full text-slate-700 text-sm font-medium hover:border-slate-400 hover:bg-slate-100 transition-all duration-300"
+              className="px-8 py-3.5 border border-white/20 rounded-full text-sm font-medium hover:border-white/50 hover:bg-white/[0.07] transition-all duration-300"
             >
               Meet The Team
             </Link>
@@ -270,14 +270,14 @@ export default function HomeClient({
           style={{ zIndex: 10, position: "absolute", bottom: "2.5rem" }}
           className="flex flex-col items-center gap-2"
         >
-          <div className="w-5 h-8 rounded-full border border-slate-300 flex items-start justify-center p-1">
+          <div className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center p-1">
             <motion.div
-              className="w-1 h-2 rounded-full bg-slate-400"
+              className="w-1 h-2 rounded-full bg-white/60"
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
             />
           </div>
-          <span className="text-[10px] tracking-[0.3em] uppercase text-slate-400 font-bold">Scroll</span>
+          <span className="text-[10px] tracking-[0.3em] uppercase text-white/25">Scroll</span>
         </motion.div>
       </section >
 
@@ -285,9 +285,10 @@ export default function HomeClient({
           SECTION 2 — IDENTITY
       ══════════════════════════════════════ */}
       <section
-        className="relative min-h-[100dvh] md:min-h-screen flex flex-col justify-center items-center px-6 bg-transparent overflow-hidden md:snap-start md:snap-always"
+        className="relative min-h-[100dvh] md:min-h-screen flex flex-col justify-center items-center px-6 bg-black border-t border-white/[0.07] overflow-hidden md:snap-start md:snap-always"
       >
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(249,115,22,0.08) 0%, transparent 70%)" }} />
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(30,50,150,0.07) 0%, transparent 70%)" }} />
 
         <motion.div
           initial={{ opacity: 0, y: 70 }}
@@ -296,7 +297,7 @@ export default function HomeClient({
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="relative z-10 max-w-2xl w-full"
         >
-          <div className="border border-slate-200 rounded-3xl p-12 bg-white shadow-xl text-center space-y-5">
+          <div className="border border-white/10 rounded-3xl p-12 backdrop-blur-xl bg-white/[0.02] text-center space-y-5">
             <motion.div
               initial={{ scale: 0.65, opacity: 0 }}
               whileInView={{ scale: 1, opacity: 1 }}
@@ -304,42 +305,15 @@ export default function HomeClient({
               transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
               className="flex justify-center mb-8"
             >
-              <div className="w-24 h-24 relative rounded-2xl flex items-center justify-center overflow-hidden border border-slate-200 shadow-lg bg-slate-50">
-                <svg
-                  width="64"
-                  height="64"
-                  viewBox="0 0 120 120"
-                  fill="none"
-                  aria-label="Data Nexus Globe"
-                >
-                  <defs>
-                    <linearGradient id="idGrad1" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="#0ea5e9" />
-                      <stop offset="100%" stopColor="#f97316" />
-                    </linearGradient>
-                    <linearGradient id="idGrad2" x1="1" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#0ea5e9" />
-                      <stop offset="100%" stopColor="#f97316" />
-                    </linearGradient>
-                  </defs>
-
-                  {/* Base Sphere */}
-                  <circle cx="60" cy="60" r="24" stroke="url(#idGrad1)" strokeWidth="1.5" fill="#000" />
-
-                  {/* Lat/Lng Wireframe lines */}
-                  <path d="M 60 36 C 40 36 40 84 60 84 C 80 84 80 36 60 36" stroke="url(#idGrad2)" strokeWidth="1" strokeOpacity="0.8" />
-                  <path d="M 36 60 C 36 40 84 40 84 60 C 84 80 36 80 36 60" stroke="url(#idGrad1)" strokeWidth="1" strokeOpacity="0.8" />
-
-                  {/* Orbital Rings crossed */}
-                  <ellipse cx="60" cy="60" rx="46" ry="16" stroke="url(#idGrad1)" strokeWidth="2.5" strokeLinecap="round" transform="rotate(25 60 60)" />
-                  <ellipse cx="60" cy="60" rx="46" ry="16" stroke="url(#idGrad2)" strokeWidth="2.5" strokeLinecap="round" transform="rotate(-25 60 60)" />
-
-                  {/* Atom Orbs */}
-                  <circle cx="18" cy="40" r="4" fill="#0ea5e9" />
-                  <circle cx="102" cy="80" r="4" fill="#f97316" />
-                  <circle cx="60" cy="14" r="4" fill="#0ea5e9" />
-                  <circle cx="60" cy="106" r="4" fill="#f97316" />
-                </svg>
+              <div className="w-24 h-24 rounded-2xl overflow-hidden border border-white/15 shadow-[0_0_40px_rgba(255,255,255,0.08)]">
+                <Image
+                  src="/favicon.png"
+                  alt="Data Nexus Logo"
+                  width={96}
+                  height={96}
+                  className="w-full h-full object-cover"
+                  priority
+                />
               </div>
             </motion.div>
 
@@ -349,7 +323,7 @@ export default function HomeClient({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="text-3xl md:text-4xl font-bold text-slate-900"
+              className="text-3xl md:text-4xl font-semibold text-white"
             >
               Department of Data Science
             </motion.h2>
@@ -358,7 +332,7 @@ export default function HomeClient({
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.45 }}
-              className="text-slate-600 text-lg"
+              className="text-zinc-400 text-lg"
             >
               Joginpally B.R. Engineering College
             </motion.p>
@@ -367,7 +341,7 @@ export default function HomeClient({
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.55 }}
-              className="text-slate-500 text-xs tracking-widest pt-2 font-semibold"
+              className="text-zinc-600 text-xs tracking-widest pt-2"
             >
               UGC Autonomous · Yenkapally, Moinabad
             </motion.p>
@@ -376,100 +350,13 @@ export default function HomeClient({
       </section >
 
       {/* ══════════════════════════════════════
-          SECTION 2.5 — VISION & MISSION
-      ══════════════════════════════════════ */}
-      <section
-        className="relative min-h-[100dvh] md:min-h-screen flex flex-col justify-center items-center px-6 py-20 bg-transparent overflow-hidden md:snap-start md:snap-always"
-      >
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 55% at 50% 50%, rgba(168,85,247,0.06) 0%, transparent 70%)" }} />
-
-        <div className="relative z-10 max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-8 md:gap-12">
-          {/* Vision Card */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="group relative border border-slate-200 rounded-[2.5rem] p-10 md:p-12 bg-white shadow-xl hover:shadow-2xl hover:border-sky-300 transition-all duration-500 overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:scale-110 transition-transform duration-700">
-              <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-            </div>
-
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-12 h-12 rounded-2xl bg-sky-500/10 flex items-center justify-center text-sky-600">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-              </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-slate-900">Our Vision</h2>
-            </div>
-            <p className="text-slate-600 text-lg leading-relaxed">
-              To build a community of disciplined, skilled, and future-ready technologists who solve real-world problems through data-driven thinking, secure systems, and strong engineering practices.
-            </p>
-          </motion.div>
-
-          {/* Mission Card */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="group relative border border-slate-200 rounded-[2.5rem] p-10 md:p-12 bg-white shadow-xl hover:shadow-2xl hover:border-orange-300 transition-all duration-500 overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:scale-110 transition-transform duration-700">
-              <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 22v-5" />
-                <path d="M9 7V2" />
-                <path d="M15 7V2" />
-                <path d="M12 13V7" />
-                <path d="M12 7H9" />
-                <path d="M12 7h3" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-            </div>
-
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-600">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 22v-5" />
-                  <path d="M9 7V2" />
-                  <path d="M15 7V2" />
-                  <path d="M12 13V7" />
-                  <path d="M12 7H9" />
-                  <path d="M12 7h3" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-              </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-slate-900">Our Mission</h2>
-            </div>
-            <ul className="space-y-4">
-              {[
-                "Foster data-driven thinking for informed decision-making",
-                "Promote secure and reliable system design",
-                "Strengthen core engineering practices and teamwork",
-              ].map((point, idx) => (
-                <li key={idx} className="flex gap-4 items-start">
-                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0" />
-                  <span className="text-slate-600 leading-snug">{point}</span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        </div>
-      </section >
-
-      {/* ══════════════════════════════════════
           SECTION 3 — STATS
       ══════════════════════════════════════ */}
       <section
-        className="relative min-h-[100dvh] md:min-h-screen flex flex-col justify-center items-center px-6 bg-transparent overflow-hidden md:snap-start md:snap-always"
+        className="relative min-h-[100dvh] md:min-h-screen flex flex-col justify-center items-center px-6 bg-black border-t border-white/[0.07] overflow-hidden md:snap-start md:snap-always"
       >
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(14,165,233,0.08) 0%, transparent 70%)" }} />
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(20,100,60,0.05) 0%, transparent 70%)" }} />
 
         <div className="relative z-10 max-w-5xl mx-auto w-full space-y-16">
           <motion.div
@@ -480,7 +367,7 @@ export default function HomeClient({
             className="text-center space-y-3"
           >
             <p className="text-xs text-gray-500 uppercase tracking-[0.3em]">By the numbers</p>
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900">Our Impact</h2>
+            <h2 className="text-4xl md:text-6xl font-bold tracking-tight">Our Impact</h2>
           </motion.div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
@@ -493,7 +380,7 @@ export default function HomeClient({
                 transition={{ delay: i * 0.12, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 className="text-center space-y-3"
               >
-                <p className="text-5xl md:text-6xl font-bold tabular-nums tracking-tight bg-gradient-to-b from-blue-600 to-indigo-900 bg-clip-text text-transparent drop-shadow-sm">
+                <p className="text-5xl md:text-6xl font-bold tabular-nums tracking-tight bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent">
                   <CountUp target={stat.value} />
                   <span>{stat.suffix ?? "+"}</span>
                 </p>
@@ -508,9 +395,10 @@ export default function HomeClient({
           SECTION 4 — FOCUS AREAS
       ══════════════════════════════════════ */}
       <section
-        className="relative min-h-[100dvh] md:min-h-screen flex flex-col justify-center items-center px-6 py-20 bg-transparent overflow-hidden md:snap-start md:snap-always"
+        className="relative min-h-[100dvh] md:min-h-screen flex flex-col justify-center items-center px-6 py-20 bg-black border-t border-white/[0.07] overflow-hidden md:snap-start md:snap-always"
       >
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 50% at 50% 30%, rgba(249,115,22,0.08) 0%, transparent 70%)" }} />
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse 80% 50% at 50% 30%, rgba(80,30,120,0.06) 0%, transparent 70%)" }} />
 
         <div className="relative z-10 max-w-6xl mx-auto w-full space-y-16">
           <motion.div
@@ -521,8 +409,8 @@ export default function HomeClient({
             className="text-center space-y-4"
           >
             <p className="text-xs text-gray-500 uppercase tracking-[0.3em]">What we do</p>
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900">Our Focus</h2>
-            <p className="text-slate-600 max-w-xl mx-auto text-lg">
+            <h2 className="text-4xl md:text-6xl font-bold tracking-tight">Our Focus</h2>
+            <p className="text-zinc-500 max-w-xl mx-auto text-lg">
               We operate at the intersection of data, technology, and innovation.
             </p>
           </motion.div>
@@ -536,16 +424,16 @@ export default function HomeClient({
                 viewport={{ once: true, amount: 0.15 }}
                 transition={{ delay: index * 0.14, duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
                 whileHover={{ scale: 1.03, y: -7 }}
-                className={`group relative border border-slate-200 shadow-xl rounded-3xl p-10 bg-white hover:-translate-y-2 hover:shadow-2xl hover:border-sky-300 transition-all duration-300 overflow-hidden`}
+                className={`group relative border border-white/10 rounded-3xl p-10 backdrop-blur-xl bg-gradient-to-br ${item.gradient} hover:border-white/25 transition-all duration-300 overflow-hidden`}
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                  style={{ background: "radial-gradient(ellipse at top left, rgba(14,165,233,0.05), transparent 60%)" }} />
+                  style={{ background: "radial-gradient(ellipse at top left, rgba(255,255,255,0.04), transparent 60%)" }} />
                 <div className={`${item.iconColor} mb-6 transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-110`}>
                   {item.icon}
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-slate-900">{item.title}</h3>
-                <p className="text-slate-600 leading-relaxed text-sm">{item.desc}</p>
-                <div className="mt-8 h-[1px] bg-gradient-to-r from-slate-200/0 via-slate-300 to-slate-200/0 w-0 group-hover:w-full transition-all duration-500" />
+                <h3 className="text-xl font-semibold mb-3 text-white">{item.title}</h3>
+                <p className="text-zinc-500 leading-relaxed text-sm">{item.desc}</p>
+                <div className="mt-8 h-[1px] bg-gradient-to-r from-white/0 via-white/25 to-white/0 w-0 group-hover:w-full transition-all duration-500" />
               </motion.div>
             ))}
           </div>
@@ -556,9 +444,10 @@ export default function HomeClient({
           SECTION 5 — FACULTY
       ══════════════════════════════════════ */}
       <section
-        className="relative min-h-[100dvh] md:min-h-screen flex flex-col justify-center items-center px-6 py-20 bg-transparent overflow-hidden md:snap-start md:snap-always"
+        className="relative min-h-[100dvh] md:min-h-screen flex flex-col justify-center items-center px-6 py-20 bg-black border-t border-white/[0.07] overflow-hidden md:snap-start md:snap-always"
       >
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(14,165,233,0.06) 0%, transparent 70%)" }} />
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(30,60,90,0.06) 0%, transparent 70%)" }} />
 
         <div className="relative z-10 max-w-6xl mx-auto w-full space-y-16">
           <motion.div
@@ -569,8 +458,8 @@ export default function HomeClient({
             className="text-center space-y-4"
           >
             <p className="text-xs text-gray-500 uppercase tracking-[0.3em]">Under the guidance of</p>
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900">Faculty Coordinators</h2>
-            <p className="text-slate-600 max-w-xl mx-auto">
+            <h2 className="text-4xl md:text-6xl font-bold tracking-tight">Faculty Coordinators</h2>
+            <p className="text-zinc-500 max-w-xl mx-auto">
               Guided and supported by the Department of Data Science.
             </p>
           </motion.div>
@@ -586,29 +475,29 @@ export default function HomeClient({
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.12, duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
-                  className={`relative border rounded-[2rem] p-8 text-center transition-all duration-300 ${member.isHOD
-                    ? "border-sky-200 bg-sky-50 shadow-xl"
-                    : "border-slate-200 bg-white shadow-md hover:shadow-xl hover:-translate-y-2 hover:border-slate-300"
+                  className={`relative border rounded-3xl p-8 backdrop-blur-xl text-center transition-all duration-300 ${member.isHOD
+                    ? "border-white/25 bg-white/[0.06] shadow-[0_0_50px_rgba(255,255,255,0.05)]"
+                    : "border-white/10 bg-white/[0.03] hover:border-white/25 hover:bg-white/[0.06]"
                     }`}
                 >
                   {member.isHOD && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <span className="px-3 py-1 bg-sky-500 text-white text-[10px] font-semibold uppercase tracking-widest rounded-full shadow-md">
+                      <span className="px-3 py-1 bg-white text-black text-[10px] font-semibold uppercase tracking-widest rounded-full">
                         HOD
                       </span>
                     </div>
                   )}
-                  <div className="relative w-28 h-28 mx-auto rounded-full bg-slate-100 mb-6 overflow-hidden flex items-center justify-center border border-slate-200 shadow-sm">
+                  <div className="relative w-28 h-28 mx-auto rounded-full bg-white/10 mb-6 overflow-hidden flex items-center justify-center border border-white/10">
                     {member.photo ? (
                       <Image src={member.photo} alt={member.name} fill className="object-cover" sizes="112px" />
                     ) : (
-                      <span className="text-3xl font-bold text-slate-300">
+                      <span className="text-3xl font-bold text-white/20">
                         {member.name ? member.name[0].toUpperCase() : "?"}
                       </span>
                     )}
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900">{member.name || "TBA"}</h3>
-                  <p className="text-slate-600 text-sm mt-2">{member.designation}</p>
+                  <h3 className="text-xl font-semibold">{member.name || "TBA"}</h3>
+                  <p className="text-zinc-400 text-sm mt-2">{member.designation}</p>
                 </motion.div>
               ))}
             </div>
