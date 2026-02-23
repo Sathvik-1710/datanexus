@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 interface EventCarouselProps {
     images: string[];
@@ -42,11 +43,14 @@ export default function EventCarousel({ images, title }: EventCarouselProps) {
     // Single image — no carousel chrome needed
     if (validImages.length === 1) {
         return (
-            <div className="w-full rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
-                <img
+            <div className="w-full rounded-3xl overflow-hidden border border-white/10 shadow-2xl relative h-64 md:h-[520px]">
+                <Image
                     src={validImages[0]}
                     alt={title}
-                    className="w-full max-h-[520px] object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 800px"
+                    priority
                 />
             </div>
         );
@@ -63,18 +67,25 @@ export default function EventCarousel({ images, title }: EventCarouselProps) {
             {/* Main slide area */}
             <div className="relative w-full rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-white/5 aspect-[16/9] md:aspect-auto md:h-[480px]">
                 <AnimatePresence custom={direction} mode="popLayout">
-                    <motion.img
+                    <motion.div
                         key={current}
-                        src={validImages[current]}
-                        alt={`${title} — image ${current + 1}`}
                         custom={direction}
                         variants={variants}
                         initial="enter"
                         animate="center"
                         exit="exit"
                         transition={{ duration: 0.45, ease: [0.32, 0.72, 0, 1] }}
-                        className="absolute inset-0 w-full h-full object-cover"
-                    />
+                        className="absolute inset-0 w-full h-full"
+                    >
+                        <Image
+                            src={validImages[current]}
+                            alt={`${title} — image ${current + 1}`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 800px"
+                            priority
+                        />
+                    </motion.div>
                 </AnimatePresence>
 
                 {/* Gradient overlay at bottom */}
@@ -125,10 +136,10 @@ export default function EventCarousel({ images, title }: EventCarouselProps) {
                     <button
                         key={i}
                         onClick={() => goTo(i, i > current ? 1 : -1)}
-                        className={`flex-shrink-0 w-20 h-14 rounded-xl overflow-hidden border transition-all duration-200 ${i === current ? "border-white/60 opacity-100" : "border-white/10 opacity-40 hover:opacity-70"
+                        className={`flex-shrink-0 relative w-20 h-14 rounded-xl overflow-hidden border transition-all duration-200 ${i === current ? "border-white/60 opacity-100" : "border-white/10 opacity-40 hover:opacity-70"
                             }`}
                     >
-                        <img src={src} alt={`Thumbnail ${i + 1}`} className="w-full h-full object-cover" />
+                        <Image src={src} alt={`Thumbnail ${i + 1}`} fill className="object-cover" sizes="80px" />
                     </button>
                 ))}
             </div>

@@ -10,6 +10,13 @@ export default function CursorGlow() {
     const glowRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        // Disable resource-intensive cursor tracking on mobile/touch devices
+        if (window.matchMedia("(max-width: 768px)").matches ||
+            ("ontouchstart" in window) ||
+            navigator.maxTouchPoints > 0) {
+            return;
+        }
+
         const el = glowRef.current;
         if (!el) return;
 

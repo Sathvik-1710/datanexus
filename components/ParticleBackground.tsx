@@ -35,8 +35,11 @@ export default function ParticleBackground() {
         resize();
         window.addEventListener("resize", resize);
 
+        const isMobile = window.innerWidth < 768;
+        const currentParticleCount = isMobile ? 35 : PARTICLE_COUNT; // Drastically reduce particles on mobile
+
         // Init particles
-        particles.current = Array.from({ length: PARTICLE_COUNT }, () => ({
+        particles.current = Array.from({ length: currentParticleCount }, () => ({
             x: Math.random() * canvas.width,
             y: Math.random() * canvas.height,
             vx: (Math.random() - 0.5) * SPEED * 2,

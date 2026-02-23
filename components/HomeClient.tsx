@@ -188,21 +188,14 @@ export default function HomeClient({
     /* ── Apple-style outer scroll container ── */
     <div
       ref={containerRef}
-      style={{
-        height: "100dvh",
-        overflowY: "scroll",
-        scrollSnapType: "y mandatory",
-        scrollBehavior: "smooth",
-        position: "relative",
-      }}
+      className="h-[100dvh] overflow-y-auto md:max-h-[100dvh] md:snap-y md:snap-mandatory scroll-smooth relative"
     >
       {/* ══════════════════════════════════════
           SECTION 1 — HERO
       ══════════════════════════════════════ */}
       <section
         ref={heroRef}
-        style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
-        className="relative min-h-screen flex flex-col justify-center items-center text-center px-6 overflow-hidden bg-black"
+        className="relative min-h-[100dvh] md:min-h-screen flex flex-col justify-center items-center text-center px-6 overflow-hidden bg-black md:snap-start md:snap-always"
       >
         {/* Neural particle network */}
         <ParticleBackground />
@@ -291,9 +284,8 @@ export default function HomeClient({
       {/* ══════════════════════════════════════
           SECTION 2 — IDENTITY
       ══════════════════════════════════════ */}
-      < section
-        style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
-        className="relative min-h-screen flex flex-col justify-center items-center px-6 bg-black border-t border-white/[0.07] overflow-hidden"
+      <section
+        className="relative min-h-[100dvh] md:min-h-screen flex flex-col justify-center items-center px-6 bg-black border-t border-white/[0.07] overflow-hidden md:snap-start md:snap-always"
       >
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(30,50,150,0.07) 0%, transparent 70%)" }} />
@@ -360,9 +352,8 @@ export default function HomeClient({
       {/* ══════════════════════════════════════
           SECTION 3 — STATS
       ══════════════════════════════════════ */}
-      < section
-        style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
-        className="relative min-h-screen flex flex-col justify-center items-center px-6 bg-black border-t border-white/[0.07] overflow-hidden"
+      <section
+        className="relative min-h-[100dvh] md:min-h-screen flex flex-col justify-center items-center px-6 bg-black border-t border-white/[0.07] overflow-hidden md:snap-start md:snap-always"
       >
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(20,100,60,0.05) 0%, transparent 70%)" }} />
@@ -403,9 +394,8 @@ export default function HomeClient({
       {/* ══════════════════════════════════════
           SECTION 4 — FOCUS AREAS
       ══════════════════════════════════════ */}
-      < section
-        style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
-        className="relative min-h-screen flex flex-col justify-center items-center px-6 py-20 bg-black border-t border-white/[0.07] overflow-hidden"
+      <section
+        className="relative min-h-[100dvh] md:min-h-screen flex flex-col justify-center items-center px-6 py-20 bg-black border-t border-white/[0.07] overflow-hidden md:snap-start md:snap-always"
       >
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: "radial-gradient(ellipse 80% 50% at 50% 30%, rgba(80,30,120,0.06) 0%, transparent 70%)" }} />
@@ -453,9 +443,8 @@ export default function HomeClient({
       {/* ══════════════════════════════════════
           SECTION 5 — FACULTY
       ══════════════════════════════════════ */}
-      < section
-        style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
-        className="relative min-h-screen flex flex-col justify-center items-center px-6 py-20 bg-black border-t border-white/[0.07] overflow-hidden"
+      <section
+        className="relative min-h-[100dvh] md:min-h-screen flex flex-col justify-center items-center px-6 py-20 bg-black border-t border-white/[0.07] overflow-hidden md:snap-start md:snap-always"
       >
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(30,60,90,0.06) 0%, transparent 70%)" }} />
@@ -498,9 +487,9 @@ export default function HomeClient({
                       </span>
                     </div>
                   )}
-                  <div className="w-28 h-28 mx-auto rounded-full bg-white/10 mb-6 overflow-hidden flex items-center justify-center border border-white/10">
+                  <div className="relative w-28 h-28 mx-auto rounded-full bg-white/10 mb-6 overflow-hidden flex items-center justify-center border border-white/10">
                     {member.photo ? (
-                      <img src={member.photo} alt={member.name} className="w-full h-full object-cover" loading="lazy" />
+                      <Image src={member.photo} alt={member.name} fill className="object-cover" sizes="112px" />
                     ) : (
                       <span className="text-3xl font-bold text-white/20">
                         {member.name ? member.name[0].toUpperCase() : "?"}
@@ -519,9 +508,9 @@ export default function HomeClient({
       {/* ══════════════════════════════════════
           SECTION 6 — FOOTER
       ══════════════════════════════════════ */}
-      < section style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}>
+      <section className="md:snap-start md:snap-always">
         <Footer />
-      </section >
+      </section>
     </div >
   );
 }
