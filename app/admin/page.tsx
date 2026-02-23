@@ -110,6 +110,15 @@ export default function SuperAdminPanel() {
     /* ──────────────────────────────────────────────────────────────────────────
        FETCH LOGIC
        ────────────────────────────────────────────────────────────────────────── */
+    // Improved Tab Switcher (Clears old data to prevent leakage)
+    const handleTabChange = (tab: typeof activeTab) => {
+        setIsModalOpen(false);
+        setEditingItem(null);
+        setError("");
+        setSuccessMsg("");
+        setActiveTab(tab);
+    };
+
     useEffect(() => {
         if (isAuthenticated) {
             fetchAllData();
@@ -392,12 +401,12 @@ export default function SuperAdminPanel() {
                 </div>
 
                 <nav className="flex flex-col gap-2">
-                    <NavItem active={activeTab === 'registrations'} icon={<Users size={18} />} label="Registrations" onClick={() => setActiveTab('registrations')} />
-                    <NavItem active={activeTab === 'events'} icon={<Calendar size={18} />} label="Events" onClick={() => setActiveTab('events')} />
-                    <NavItem active={activeTab === 'projects'} icon={<FolderGit2 size={18} />} label="Project Showcase" onClick={() => setActiveTab('projects')} />
-                    <NavItem active={activeTab === 'team'} icon={<Group size={18} />} label="Team" onClick={() => setActiveTab('team')} />
-                    <NavItem active={activeTab === 'faculty'} icon={<Trophy size={18} />} label="Faculty" onClick={() => setActiveTab('faculty')} />
-                    <NavItem active={activeTab === 'settings'} icon={<Settings size={18} />} label="Site Settings" onClick={() => setActiveTab('settings')} />
+                    <NavItem active={activeTab === 'registrations'} icon={<Users size={18} />} label="Registrations" onClick={() => handleTabChange('registrations')} />
+                    <NavItem active={activeTab === 'events'} icon={<Calendar size={18} />} label="Events" onClick={() => handleTabChange('events')} />
+                    <NavItem active={activeTab === 'projects'} icon={<FolderGit2 size={18} />} label="Project Showcase" onClick={() => handleTabChange('projects')} />
+                    <NavItem active={activeTab === 'team'} icon={<Group size={18} />} label="Team" onClick={() => handleTabChange('team')} />
+                    <NavItem active={activeTab === 'faculty'} icon={<Trophy size={18} />} label="Faculty" onClick={() => handleTabChange('faculty')} />
+                    <NavItem active={activeTab === 'settings'} icon={<Settings size={18} />} label="Site Settings" onClick={() => handleTabChange('settings')} />
                 </nav>
 
                 <div className="mt-auto pt-8 border-t border-white/10">
