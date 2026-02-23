@@ -161,70 +161,77 @@ export default function SuperAdminPanel() {
     async function handleSave(e: React.FormEvent) {
         e.preventDefault();
         setLoading(true);
+        setError("");
+
         try {
             const formData = new FormData(e.currentTarget as HTMLFormElement);
-            // Collect all fields including hidden ones from our custom widgets
-            const data = Object.fromEntries(formData) as any;
+            const rawData = Object.fromEntries(formData) as any;
 
-            // 1. Handle Events Images (Must be a clean array)
-            if (activeTab === 'events') {
-                const imgStr = data.images || "";
-                data.images = imgStr.split(',').map((s: string) => s.trim()).filter(Boolean);
+            // --- STRICT DATA NORMALIZATION FOR POSTGRESQL ---
+            const cleanData: any = { ...rawData };
+
+            // 1. Handle Images Array (Critical fix for "malformed array literal")
+            if (cleanData.images !== undefined) {
+                const rawImages = cleanData.images || "";
+                const imgArray = typeof rawImages === 'string'
+                    ? rawImages.split(',').map((s: string) => s.trim()).filter(Boolean)
+                    : rawImages;
+
+                // If the array is empty, we must send NULL or a valid PG array literal. 
+                // NULL is safest for optional arrays.
+                cleanData.images = (Array.isArray(imgArray) && imgArray.length > 0) ? imgArray : null;
             }
 
-            // 2. Handle Faculty HOD status
-            if (data.is_hod !== undefined) {
-                data.is_hod = data.is_hod === "on" || data.is_hod === "true";
+            // 2. Handle ID (Remove if empty to let PG generate a UUID)
+            if (!cleanData.id || cleanData.id === "" || cleanData.id === "undefined") {
+                delete cleanData.id;
             }
 
-            // 3. Handle Numeric Fields (Convert string to actual numbers)
-            if (data.order) data.order = parseInt(data.order);
-            if (data.years_active) data.years_active = parseInt(data.years_active);
-            if (data.founded_year) data.founded_year = parseInt(data.founded_year);
+            // 3. Handle Boolean (HOD Status)
+            if (cleanData.is_hod !== undefined) {
+                cleanData.is_hod = cleanData.is_hod === "on" || cleanData.is_hod === "true";
+            }
 
-            // 4. Cleanup: Convert empty strings to null so they don't break DB constraints
-            Object.keys(data).forEach(key => {
-                if (data[key] === "") data[key] = null;
+            // 4. Handle Numeric Fields
+            if (cleanData.order) cleanData.order = parseInt(cleanData.order) || 0;
+            if (cleanData.years_active) cleanData.years_active = parseInt(cleanData.years_active) || 0;
+            if (cleanData.founded_year) cleanData.founded_year = parseInt(cleanData.founded_year) || 0;
+
+            // 5. Global Empty String Cleanup
+            Object.keys(cleanData).forEach(key => {
+                if (cleanData[key] === "") cleanData[key] = null;
             });
 
-            // Determine conflict column
-            let conflictCol = 'id'; // Default to ID for safety
-            if (!data.id) {
-                // If it's a new record without an ID, we use slug as the unique constraint
-                conflictCol = 'slug';
-                if (activeTab === 'settings') conflictCol = 'id';
+            // --- DATABASE PERSISTENCE ---
+            const conflictCol = cleanData.id ? 'id' : 'slug';
+            const { error: dbError } = await supabase.from(activeTab).upsert(cleanData, { onConflict: activeTab === 'settings' ? 'id' : conflictCol });
+
+            if (dbError) {
+                console.error("Supabase Save Error:", dbError);
+                alert(`❌ Database Rejected Changes: ${dbError.message}\n\nHint: Make sure the 'uploads' bucket is Public in Supabase Storage.`);
+                throw dbError;
             }
 
-            // Remove empty strings from ID so Supabase generates a new UUID for new items
-            if (data.id === "") delete data.id;
-
-            const { data: result, error } = await supabase.from(activeTab).upsert(data, { onConflict: conflictCol });
-
-            if (error) {
-                console.error("Supabase Save Error:", error);
-                alert(`❌ Database Error: ${error.message} (${error.code})\n\nCheck if you ran the SQL policies for this table.`);
-                throw error;
-            }
-
-            // Trigger Next.js revalidation so changes appear instantly on the live site
+            // --- CACHE REVALIDATION ---
             try {
                 await fetch('/api/revalidate', {
                     method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         path: activeTab === 'events' ? '/events' :
                             activeTab === 'team' ? '/team' : '/'
                     })
                 });
             } catch (revalErr) {
-                console.warn("Revalidation trigger failed, but data was saved.");
+                console.warn("Cache revalidation timed out (this is fine, data is saved).");
             }
 
-            showSuccess("Changes saved instantly.");
+            showSuccess("Changes saved successfully!");
             setIsModalOpen(false);
             setEditingItem(null);
             fetchAllData();
         } catch (err: any) {
-            setError(err.message);
+            setError(err.message || "An unexpected error occurred.");
         } finally {
             setLoading(false);
         }
@@ -365,7 +372,10 @@ export default function SuperAdminPanel() {
             <aside className="w-full md:w-72 border-r border-white/10 bg-black/50 backdrop-blur-2xl p-6 flex flex-col gap-8 z-20">
                 <div className="flex items-center gap-3 px-2">
                     <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">DN</div>
-                    <span className="font-bold tracking-widest text-sm">DATA NEXUS</span>
+                    <div className="flex flex-col">
+                        <span className="font-bold tracking-widest text-sm">DATA NEXUS</span>
+                        <span className="text-[8px] text-gray-600 font-mono uppercase tracking-widest mt-0.5">System v2.2</span>
+                    </div>
                 </div>
 
                 <nav className="flex flex-col gap-2">
