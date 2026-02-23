@@ -12,76 +12,89 @@ import type { FacultyMember } from "@/lib/faculty";
 const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!<>-_\\\\/[]{}—=+*^?#";
 
 function ScrambleTitle({ text }: { text: string }) {
-  const [display, setDisplay] = useState(text);
-  const [isScrambling, setIsScrambling] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    let iteration = 0;
-    const letters = text.split("");
-    let interval: NodeJS.Timeout;
+  }, []);
 
-    const timeout = setTimeout(() => {
-      setIsScrambling(true);
-      interval = setInterval(() => {
-        setDisplay(
-          letters
-            .map((char, index) => {
-              if (char === " ") return " ";
-              if (index < iteration) {
-                return char; // locked char
-              }
-              // random hacker char
-              return CHARS[Math.floor(Math.random() * CHARS.length)];
-            })
-            .join("")
-        );
-
-        if (iteration >= letters.length) {
-          clearInterval(interval);
-          setIsScrambling(false);
-        }
-
-        iteration += 1 / 3; // speed of lock-in
-      }, 30);
-    }, 150);
-
-    return () => {
-      clearTimeout(timeout);
-      clearInterval(interval);
-    };
-  }, [text]);
-
-  const displayWords = display.split(" ");
-  const originalWords = text.split(" ");
   let globalIndex = 0;
 
   return (
     <>
-      {displayWords.map((word, wi) => {
-        const origWord = originalWords[wi] || "";
-        return (
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true" className="flex flex-wrap justify-center gap-x-[0.25em]">
+        {text.split(" ").map((word, wi) => (
           <span key={wi} className="flex">
-            {word.split("").map((char, ci) => {
-              const charIdx = globalIndex++;
-              // Fallback to true if server-side (!mounted) to ensure pristine text SEO and initial load
-              const isLocked = !mounted || (char === origWord[ci] && !isScrambling);
+            {word.split("").map((char) => {
+              const currentIdx = globalIndex++;
               return (
-                <span
-                  key={charIdx}
-                  className={`transition-opacity duration-75 ${isLocked ? "opacity-100" : "opacity-60"
-                    }`}
-                  style={{ ...gradientText }}
-                >
-                  {char}
-                </span>
+                <ScrambleLetter
+                  key={currentIdx}
+                  char={char}
+                  index={currentIdx}
+                  mounted={mounted}
+                />
               );
             })}
           </span>
-        );
-      })}
+        ))}
+      </span>
     </>
+  );
+}
+
+function ScrambleLetter({ char, index, mounted }: { char: string; index: number; mounted: boolean }) {
+  const [display, setDisplay] = useState(char);
+  const [isLocked, setIsLocked] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    let interval: NodeJS.Timeout;
+
+    // Trigger fade-in stagger natively
+    const visTimeout = setTimeout(() => {
+      setIsVisible(true);
+    }, index * 60 + 50);
+
+    // Start scrambling
+    const startTimeout = setTimeout(() => {
+      interval = setInterval(() => {
+        setDisplay(CHARS[Math.floor(Math.random() * CHARS.length)]);
+      }, 40);
+    }, index * 20);
+
+    // Lock correct letter
+    const lockTimeout = setTimeout(() => {
+      clearInterval(interval);
+      setDisplay(char);
+      setIsLocked(true);
+    }, 700 + index * 90);
+
+    return () => {
+      clearTimeout(startTimeout);
+      clearTimeout(lockTimeout);
+      clearTimeout(visTimeout);
+      clearInterval(interval);
+    };
+  }, [mounted, index, char]);
+
+  return (
+    <span
+      style={{
+        ...gradientText,
+        transform: isVisible ? "translateY(0)" : "translateY(25px)",
+        opacity: isVisible ? 1 : 0,
+        filter: isVisible ? "blur(0px)" : "blur(8px)",
+        transition: "all 0.7s cubic-bezier(0.16, 1, 0.3, 1)",
+      }}
+      className={`inline-block ${isLocked ? "text-white" : "text-white/50"
+        }`}
+    >
+      {display}
+    </span>
   );
 }
 
@@ -185,6 +198,11 @@ export default function HomeClient({
 }) {
   const heroRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Scroll-driven parallax for hero content
   const { scrollYProgress } = useScroll({
@@ -195,6 +213,10 @@ export default function HomeClient({
   const heroOpacity = useTransform(scrollYProgress, [0, 0.65], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.55], [1, 0.9]);
   const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
+
+  if (!mounted) {
+    return <div className="min-h-screen bg-black" />;
+  }
 
   return (
     /* ── Apple-style outer scroll container ── */
@@ -298,12 +320,12 @@ export default function HomeClient({
           </div>
           <span className="text-[10px] tracking-[0.3em] uppercase text-white/25">Scroll</span>
         </motion.div>
-      </section>
+      </section >
 
       {/* ══════════════════════════════════════
           SECTION 2 — IDENTITY
       ══════════════════════════════════════ */}
-      <section
+      < section
         style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
         className="relative min-h-screen flex flex-col justify-center items-center px-6 bg-black border-t border-white/[0.07] overflow-hidden"
       >
@@ -367,12 +389,12 @@ export default function HomeClient({
             </motion.p>
           </div>
         </motion.div>
-      </section>
+      </section >
 
       {/* ══════════════════════════════════════
           SECTION 3 — STATS
       ══════════════════════════════════════ */}
-      <section
+      < section
         style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
         className="relative min-h-screen flex flex-col justify-center items-center px-6 bg-black border-t border-white/[0.07] overflow-hidden"
       >
@@ -410,12 +432,12 @@ export default function HomeClient({
             ))}
           </div>
         </div>
-      </section>
+      </section >
 
       {/* ══════════════════════════════════════
           SECTION 4 — FOCUS AREAS
       ══════════════════════════════════════ */}
-      <section
+      < section
         style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
         className="relative min-h-screen flex flex-col justify-center items-center px-6 py-20 bg-black border-t border-white/[0.07] overflow-hidden"
       >
@@ -460,12 +482,12 @@ export default function HomeClient({
             ))}
           </div>
         </div>
-      </section>
+      </section >
 
       {/* ══════════════════════════════════════
           SECTION 5 — FACULTY
       ══════════════════════════════════════ */}
-      <section
+      < section
         style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
         className="relative min-h-screen flex flex-col justify-center items-center px-6 py-20 bg-black border-t border-white/[0.07] overflow-hidden"
       >
@@ -526,14 +548,14 @@ export default function HomeClient({
             </div>
           )}
         </div>
-      </section>
+      </section >
 
       {/* ══════════════════════════════════════
           SECTION 6 — FOOTER
       ══════════════════════════════════════ */}
-      <section style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}>
+      < section style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}>
         <Footer />
-      </section>
-    </div>
+      </section >
+    </div >
   );
 }
