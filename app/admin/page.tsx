@@ -412,7 +412,7 @@ export default function SuperAdminPanel() {
                                         <Input label="Title" name="title" defaultValue={editingItem?.title} required />
                                         <Input label="URL Slug" name="slug" defaultValue={editingItem?.slug} placeholder="e.g. ai-workshop-2026" required />
                                         <Input label="Date" name="date" type="date" defaultValue={editingItem?.date} required />
-                                        <FileUploader label="Event Images" name="images" defaultValue={editingItem?.images} multiple={true} onUploadStart={() => setIsUploadingFile(true)} onUploadEnd={() => setIsUploadingFile(false)} onSuccess={showSuccess} onError={setError} />
+                                        <FileUploader label="Event Images" name="images" defaultValue={editingItem?.images} multiple={true} onUploadStart={() => setIsUploadingFile(true)} onUploadEnd={() => setIsUploadingFile(false)} onSuccess={showSuccess} onError={setError} hint="Recommended: 16:9 Landscape (e.g., 1920x1080). Images are stretched wide." />
                                         <Input label="Event Resource / Registration Link" name="link_url" defaultValue={editingItem?.link_url} placeholder="e.g. Google Docs, Form, or Hackathon link" />
                                         <TextArea label="Description" name="description" defaultValue={editingItem?.description} />
                                     </>
@@ -425,7 +425,7 @@ export default function SuperAdminPanel() {
                                         <Input label="GitHub Repo Link" name="github_url" defaultValue={editingItem?.github_url} />
                                         <Input label="LinkedIn/Post Link" name="linkedin_url" defaultValue={editingItem?.linkedin_url} />
                                         <Input label="Live Demo Link" name="live_url" defaultValue={editingItem?.live_url} />
-                                        <FileUploader key={editingItem?.id || 'new'} label="Project Showcase (Carousel Images)" name="images" defaultValue={editingItem?.images} multiple={true} onUploadStart={() => setIsUploadingFile(true)} onUploadEnd={() => setIsUploadingFile(false)} onSuccess={showSuccess} onError={setError} />
+                                        <FileUploader key={editingItem?.id || 'new'} label="Project Showcase (Carousel Images)" name="images" defaultValue={editingItem?.images} multiple={true} onUploadStart={() => setIsUploadingFile(true)} onUploadEnd={() => setIsUploadingFile(false)} onSuccess={showSuccess} onError={setError} hint="Recommended: 16:9 Landscape (e.g., 1920x1080). Carousels use wide containers." />
                                         <TextArea label="Project Description" name="description" defaultValue={editingItem?.description} />
                                     </>
                                 )}
@@ -435,7 +435,7 @@ export default function SuperAdminPanel() {
                                         <Input label="Full Name" name="name" defaultValue={editingItem?.name} required />
                                         <Input label="URL Name" name="slug" defaultValue={editingItem?.slug} required />
                                         <Input label="Designation / Role" name="role" defaultValue={editingItem?.role} required />
-                                        <FileUploader label="Profile Photo" name="photo" defaultValue={editingItem?.photo} onUploadStart={() => setIsUploadingFile(true)} onUploadEnd={() => setIsUploadingFile(false)} onSuccess={showSuccess} onError={setError} />
+                                        <FileUploader label="Profile Photo" name="photo" defaultValue={editingItem?.photo} onUploadStart={() => setIsUploadingFile(true)} onUploadEnd={() => setIsUploadingFile(false)} onSuccess={showSuccess} onError={setError} hint="Recommended: Portrait (4:5) or Square (1:1). Faces should be near the top center." />
                                         <Input label="LinkedIn URL" name="linkedin" defaultValue={editingItem?.linkedin} />
                                         <Input label="Sort Order" name="order" type="number" defaultValue={editingItem?.order || 0} />
                                         <TextArea label="Short Bio" name="bio" defaultValue={editingItem?.bio} />
@@ -447,7 +447,7 @@ export default function SuperAdminPanel() {
                                         <Input label="Faculty Name" name="name" defaultValue={editingItem?.name} required />
                                         <Input label="Slug" name="slug" defaultValue={editingItem?.slug} required />
                                         <Input label="Designation" name="designation" defaultValue={editingItem?.designation} required />
-                                        <FileUploader label="Profile Photo" name="photo" defaultValue={editingItem?.photo} onUploadStart={() => setIsUploadingFile(true)} onUploadEnd={() => setIsUploadingFile(false)} onSuccess={showSuccess} onError={setError} />
+                                        <FileUploader label="Profile Photo" name="photo" defaultValue={editingItem?.photo} onUploadStart={() => setIsUploadingFile(true)} onUploadEnd={() => setIsUploadingFile(false)} onSuccess={showSuccess} onError={setError} hint="Recommended: 1:1 Square (e.g., 500x500). Photos will be cropped into perfect circles." />
                                         <div className="flex items-center gap-2">
                                             <input type="checkbox" name="is_hod" defaultChecked={editingItem?.is_hod} className="w-4 h-4" />
                                             <label className="text-sm font-medium">Head of Department (HOD)</label>
@@ -499,7 +499,7 @@ async function uploadImage(file: File) {
     return publicUrl;
 }
 
-function FileUploader({ label, name, defaultValue, multiple = false, onUploadStart, onUploadEnd, onSuccess, onError }: any) {
+function FileUploader({ label, name, defaultValue, multiple = false, onUploadStart, onUploadEnd, onSuccess, onError, hint }: any) {
     const [uploading, setUploading] = useState(false);
     const [urls, setUrls] = useState<string[]>(
         Array.isArray(defaultValue) ? defaultValue : (defaultValue ? [defaultValue] : [])
@@ -559,6 +559,7 @@ function FileUploader({ label, name, defaultValue, multiple = false, onUploadSta
             </div>
 
             <input type="hidden" name={name} value={multiple ? urls.join(',') : (urls[0] || '')} />
+            {hint && <p className="text-[10px] font-bold text-blue-400 leading-tight mt-1">{hint}</p>}
             <p className="text-[10px] text-gray-600">Supports PNG, JPG, WEBP. Max 5MB recommended.</p>
         </div>
     );
