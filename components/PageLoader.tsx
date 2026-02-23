@@ -14,26 +14,32 @@ export default function PageLoader({ children }: { children: React.ReactNode }) 
     const [animating, setAnimating] = useState(false);
 
     useEffect(() => {
+        let hideTimer: NodeJS.Timeout;
+        let removeTimer: NodeJS.Timeout;
+
         if (pathname !== prevPath.current) {
             prevPath.current = pathname;
-            // Show loader
-            setVisible(true);
-            setAnimating(true);
+
+            // Fix cascading render warning by delaying paint-triggering state updates
+            requestAnimationFrame(() => {
+                setVisible(true);
+                setAnimating(true);
+            });
 
             // Hide after animation completes (must match SVG animation duration)
-            const hideTimer = setTimeout(() => {
+            hideTimer = setTimeout(() => {
                 setAnimating(false);
             }, 900);
 
-            const removeTimer = setTimeout(() => {
+            removeTimer = setTimeout(() => {
                 setVisible(false);
             }, 1100);
-
-            return () => {
-                clearTimeout(hideTimer);
-                clearTimeout(removeTimer);
-            };
         }
+
+        return () => {
+            clearTimeout(hideTimer);
+            clearTimeout(removeTimer);
+        };
     }, [pathname]);
 
     return (

@@ -1,11 +1,13 @@
 "use client";
 
+
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import {
-    Plus, X, Loader2, LogOut, LayoutDashboard, Users, Calendar, Download, Trash2,
-    Edit3 as Edit, Settings, Save, Search, FolderGit2, Trophy, Group, Lock,
-    Image as ImageIcon, ExternalLink, ChevronRight, CheckCircle2, AlertCircle
+    Plus, X, LogOut, Users, Calendar, Download, Trash2,
+    Edit3 as Edit, Settings, FolderGit2, Trophy, Group, Lock,
+    Image as ImageIcon, CheckCircle2, AlertCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -123,6 +125,7 @@ export default function SuperAdminPanel() {
         setActiveTab(tab);
     };
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (isAuthenticated) {
             fetchAllData();
@@ -236,7 +239,7 @@ export default function SuperAdminPanel() {
                                 activeTab === 'team' ? '/team' : '/'
                     })
                 });
-            } catch (revalErr) { /* ignore reval timeout */ }
+            } catch { /* ignore reval timeout */ }
 
             showSuccess("Changes saved successfully!");
             setIsModalOpen(false);
@@ -337,7 +340,7 @@ export default function SuperAdminPanel() {
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
                             <h2 className="text-3xl font-bold capitalize">{activeTab}</h2>
-                            <p className="text-gray-500 text-sm mt-1">Manage, update, and monitor your club's data in real-time.</p>
+                            <p className="text-gray-500 text-sm mt-1">Manage, update, and monitor your club&apos;s data in real-time.</p>
                         </div>
                         <div className="flex gap-3">
                             {activeTab === 'registrations' && (
