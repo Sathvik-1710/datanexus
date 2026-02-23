@@ -164,15 +164,28 @@ export default function SuperAdminPanel() {
         try {
             const formData = new FormData(e.currentTarget as HTMLFormElement);
             // Collect all fields including hidden ones from our custom widgets
-            const data = Object.fromEntries(formData);
+            const data = Object.fromEntries(formData) as any;
 
-            // Handle special fields
-            if (data.images && typeof data.images === 'string') {
-                (data as any).images = data.images.split(',').map(s => s.trim()).filter(Boolean);
+            // 1. Handle Events Images (Must be a clean array)
+            if (activeTab === 'events') {
+                const imgStr = data.images || "";
+                data.images = imgStr.split(',').map((s: string) => s.trim()).filter(Boolean);
             }
-            if (data.is_hod) {
-                (data as any).is_hod = data.is_hod === "on";
+
+            // 2. Handle Faculty HOD status
+            if (data.is_hod !== undefined) {
+                data.is_hod = data.is_hod === "on" || data.is_hod === "true";
             }
+
+            // 3. Handle Numeric Fields (Convert string to actual numbers)
+            if (data.order) data.order = parseInt(data.order);
+            if (data.years_active) data.years_active = parseInt(data.years_active);
+            if (data.founded_year) data.founded_year = parseInt(data.founded_year);
+
+            // 4. Cleanup: Convert empty strings to null so they don't break DB constraints
+            Object.keys(data).forEach(key => {
+                if (data[key] === "") data[key] = null;
+            });
 
             // Determine conflict column
             let conflictCol = 'id'; // Default to ID for safety
