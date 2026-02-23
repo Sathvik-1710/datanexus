@@ -10,11 +10,11 @@ interface Particle {
     radius: number;
 }
 
-const PARTICLE_COUNT = 90;
-const CONNECTION_DISTANCE = 140;
-const MOUSE_REPEL_DISTANCE = 120;
-const MOUSE_REPEL_STRENGTH = 0.6;
-const SPEED = 0.35;
+const PARTICLE_COUNT = 110;
+const CONNECTION_DISTANCE = 150;
+const MOUSE_REPEL_DISTANCE = 130;
+const MOUSE_REPEL_STRENGTH = 0.7;
+const SPEED = 0.4;
 
 export default function ParticleBackground() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -41,7 +41,7 @@ export default function ParticleBackground() {
             y: Math.random() * canvas.height,
             vx: (Math.random() - 0.5) * SPEED * 2,
             vy: (Math.random() - 0.5) * SPEED * 2,
-            radius: Math.random() * 1.5 + 0.5,
+            radius: Math.random() * 1.8 + 0.6,
         }));
 
         const onMouseMove = (e: MouseEvent) => {
@@ -92,26 +92,26 @@ export default function ParticleBackground() {
                 if (p.y < 0) p.y = canvas.height;
                 if (p.y > canvas.height) p.y = 0;
 
-                // Draw node
+                // Draw node — brighter, more visible
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = "rgba(255,255,255,0.5)";
+                ctx.fillStyle = "rgba(255,255,255,0.75)";
                 ctx.fill();
             }
 
-            // Draw connections
+            // Draw connections — more visible
             for (let i = 0; i < pts.length; i++) {
                 for (let j = i + 1; j < pts.length; j++) {
                     const dx = pts[i].x - pts[j].x;
                     const dy = pts[i].y - pts[j].y;
                     const d = Math.sqrt(dx * dx + dy * dy);
                     if (d < CONNECTION_DISTANCE) {
-                        const alpha = (1 - d / CONNECTION_DISTANCE) * 0.18;
+                        const alpha = (1 - d / CONNECTION_DISTANCE) * 0.28;
                         ctx.beginPath();
                         ctx.moveTo(pts[i].x, pts[i].y);
                         ctx.lineTo(pts[j].x, pts[j].y);
-                        ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
-                        ctx.lineWidth = 0.6;
+                        ctx.strokeStyle = `rgba(150,180,255,${alpha})`;
+                        ctx.lineWidth = 0.7;
                         ctx.stroke();
                     }
                 }
@@ -133,7 +133,14 @@ export default function ParticleBackground() {
     return (
         <canvas
             ref={canvasRef}
-            className="fixed inset-0 -z-10 pointer-events-none opacity-60"
+            style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                zIndex: 0,
+                pointerEvents: "none",
+            }}
             aria-hidden
         />
     );

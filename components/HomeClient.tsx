@@ -1,14 +1,139 @@
 "use client";
 
-import { motion } from "framer-motion";
+import React, { useRef, useEffect, useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
+import ParticleBackground from "./ParticleBackground";
+import Footer from "./Footer";
+import type { FacultyMember } from "@/lib/faculty";
 
+/* ─── Hacker Scramble Title Helper ─── */
+const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!<>-_\\\\/[]{}—=+*^?#";
+
+function ScrambleTitle({ text }: { text: string }) {
+  const [display, setDisplay] = useState(text);
+  const [isScrambling, setIsScrambling] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    let iteration = 0;
+    const letters = text.split("");
+    let interval: NodeJS.Timeout;
+
+    const timeout = setTimeout(() => {
+      setIsScrambling(true);
+      interval = setInterval(() => {
+        setDisplay(
+          letters
+            .map((char, index) => {
+              if (char === " ") return " ";
+              if (index < iteration) {
+                return char; // locked char
+              }
+              // random hacker char
+              return CHARS[Math.floor(Math.random() * CHARS.length)];
+            })
+            .join("")
+        );
+
+        if (iteration >= letters.length) {
+          clearInterval(interval);
+          setIsScrambling(false);
+        }
+
+        iteration += 1 / 3; // speed of lock-in
+      }, 30);
+    }, 150);
+
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
+  }, [text]);
+
+  const displayWords = display.split(" ");
+  const originalWords = text.split(" ");
+  let globalIndex = 0;
+
+  return (
+    <>
+      {displayWords.map((word, wi) => {
+        const origWord = originalWords[wi] || "";
+        return (
+          <span key={wi} className="flex">
+            {word.split("").map((char, ci) => {
+              const charIdx = globalIndex++;
+              // Fallback to true if server-side (!mounted) to ensure pristine text SEO and initial load
+              const isLocked = !mounted || (char === origWord[ci] && !isScrambling);
+              return (
+                <span
+                  key={charIdx}
+                  className={`transition-opacity duration-75 ${isLocked ? "opacity-100" : "opacity-60"
+                    }`}
+                  style={{ ...gradientText }}
+                >
+                  {char}
+                </span>
+              );
+            })}
+          </span>
+        );
+      })}
+    </>
+  );
+}
+
+const gradientText: React.CSSProperties = {
+  background: "linear-gradient(170deg, #ffffff 0%, rgba(255,255,255,0.45) 100%)",
+  WebkitBackgroundClip: "text",
+  WebkitTextFillColor: "transparent",
+  backgroundClip: "text",
+  display: "inline-block",
+};
+
+/* ─── Types ─── */
+type Stat = { label: string; value: number; suffix?: string };
+
+/* ─── CountUp ─── */
+function CountUp({ target, duration = 1400 }: { target: number; duration?: number }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const started = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !started.current) {
+        started.current = true;
+        const start = performance.now();
+        const animate = (now: number) => {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          setCount(Math.floor(eased * target));
+          if (progress < 1) requestAnimationFrame(animate);
+        };
+        requestAnimationFrame(animate);
+      }
+    }, { threshold: 0.5 });
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [target, duration]);
+
+  return <span ref={ref}>{count}</span>;
+}
+
+/* ─── Focus Areas data ─── */
 const focusAreas = [
   {
     title: "Data Science & AI",
     desc: "Exploring data pipelines, machine learning, deep learning, and intelligent systems that shape the future.",
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 2a4 4 0 0 1 4 4c0 1.5-.8 2.8-2 3.5V12h-4V9.5A4 4 0 0 1 8 6a4 4 0 0 1 4-4z" />
         <path d="M8 12H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h3" />
         <path d="M16 12h3a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-3" />
@@ -18,176 +143,397 @@ const focusAreas = [
         <circle cx="19" cy="17" r="1" />
       </svg>
     ),
+    gradient: "from-blue-500/20 to-violet-500/10",
+    iconColor: "text-blue-300",
   },
   {
     title: "Web Development",
     desc: "Building modern, scalable, and beautiful digital experiences using the latest frameworks and tools.",
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="16 18 22 12 16 6" />
         <polyline points="8 6 2 12 8 18" />
         <line x1="12" y1="2" x2="12" y2="22" opacity="0.4" />
       </svg>
     ),
+    gradient: "from-emerald-500/20 to-teal-500/10",
+    iconColor: "text-emerald-300",
   },
   {
     title: "Data Security",
     desc: "Understanding cybersecurity principles, ethical hacking, and protecting digital infrastructure.",
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         <polyline points="9 12 11 14 15 10" />
       </svg>
     ),
+    gradient: "from-rose-500/20 to-orange-500/10",
+    iconColor: "text-rose-300",
   },
 ];
 
-export default function HomeClient({ tagline }: { tagline: string }) {
+/* ─── Main Component ─── */
+export default function HomeClient({
+  tagline,
+  stats,
+  faculty,
+}: {
+  tagline: string;
+  stats: Stat[];
+  faculty: FacultyMember[];
+}) {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Scroll-driven parallax for hero content
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.65], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.55], [1, 0.9]);
+  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
+
   return (
-    <>
-      {/* ─── HERO ─── */}
-      <section className="min-h-screen flex flex-col justify-center items-center text-center px-6 relative overflow-hidden">
-        {/* Ambient glow */}
-        <div className="absolute w-[700px] h-[700px] bg-white/[0.03] rounded-full blur-3xl -z-10 pointer-events-none" />
-        <div className="absolute w-[300px] h-[300px] bg-white/[0.04] rounded-full blur-2xl -z-10 pointer-events-none top-32 right-20" />
+    /* ── Apple-style outer scroll container ── */
+    <div
+      ref={containerRef}
+      style={{
+        height: "100vh",
+        overflowY: "scroll",
+        scrollSnapType: "y mandatory",
+        scrollBehavior: "smooth",
+        position: "relative",
+      }}
+    >
+      {/* ══════════════════════════════════════
+          SECTION 1 — HERO
+      ══════════════════════════════════════ */}
+      <section
+        ref={heroRef}
+        style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
+        className="relative min-h-screen flex flex-col justify-center items-center text-center px-6 overflow-hidden bg-black"
+      >
+        {/* Neural particle network */}
+        <ParticleBackground />
 
+        {/* Blue radial glow */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            zIndex: 1,
+            background:
+              "radial-gradient(ellipse 75% 55% at 50% 50%, rgba(60,90,255,0.08) 0%, transparent 70%)",
+          }}
+        />
+
+        {/* Hero content */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="mb-6 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs text-gray-400 tracking-widest uppercase"
+          style={{ opacity: heroOpacity, scale: heroScale, y: heroY, zIndex: 10 }}
+          className="relative flex flex-col items-center"
         >
-          Department of Data Science · JBREC
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.88 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-8 px-5 py-2 rounded-full border border-white/15 bg-white/[0.06] text-[11px] text-gray-400 tracking-[0.25em] uppercase backdrop-blur-sm"
+          >
+            Department of Data Science · JBREC
+          </motion.div>
+
+          {/* Main title — Hacker Scramble Reveal */}
+          <h1 className="text-[clamp(3.5rem,12vw,9rem)] font-bold tracking-tight leading-none flex flex-wrap justify-center gap-x-[0.25em]" aria-label="Data Nexus">
+            <ScrambleTitle text="Data Nexus" />
+          </h1>
+
+          {/* Tagline */}
+          <motion.p
+            initial={{ opacity: 0, y: 35 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.95, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-7 text-zinc-400 max-w-lg text-lg leading-relaxed"
+          >
+            {tagline}
+          </motion.p>
+
+          {/* CTA buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.52, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-11 flex gap-4 flex-wrap justify-center"
+          >
+            <Link
+              href="/events"
+              className="px-8 py-3.5 bg-white text-black rounded-full font-semibold text-sm hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] transition-all duration-300"
+            >
+              Explore Events
+            </Link>
+            <Link
+              href="/team"
+              className="px-8 py-3.5 border border-white/20 rounded-full text-sm font-medium hover:border-white/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              Meet The Team
+            </Link>
+          </motion.div>
         </motion.div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-          className="text-6xl md:text-8xl font-bold tracking-tight bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent"
-        >
-          Data Nexus
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-          className="mt-6 text-zinc-400 max-w-xl text-lg leading-relaxed"
-        >
-          {tagline}
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.8 }}
-          className="mt-10 flex gap-4 flex-wrap justify-center"
-        >
-          <Link
-            href="/events"
-            className="px-7 py-3 bg-white text-black rounded-full font-medium hover:scale-105 hover:shadow-[0_0_30px_rgba(255,255,255,0.25)] transition-all duration-200"
-          >
-            Explore Events
-          </Link>
-          <Link
-            href="/team"
-            className="px-7 py-3 border border-white/20 rounded-full hover:border-white hover:bg-white/5 transition-all duration-200"
-          >
-            Meet The Team
-          </Link>
-        </motion.div>
-
+        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.4 }}
-          className="absolute bottom-10 flex flex-col items-center gap-2 text-zinc-600"
+          transition={{ delay: 1.7 }}
+          style={{ opacity: heroOpacity, zIndex: 10, position: "absolute", bottom: "2.5rem" }}
+          className="flex flex-col items-center gap-2"
         >
-          <div className="w-[1px] h-8 bg-gradient-to-b from-transparent to-zinc-600 animate-pulse" />
-          <span className="text-xs tracking-widest uppercase">Scroll</span>
+          <div className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center p-1">
+            <motion.div
+              className="w-1 h-2 rounded-full bg-white/60"
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </div>
+          <span className="text-[10px] tracking-[0.3em] uppercase text-white/25">Scroll</span>
         </motion.div>
       </section>
 
-      {/* ─── INSTITUTIONAL IDENTITY ─── */}
-      <section className="py-20 px-6 border-t border-white/10">
+      {/* ══════════════════════════════════════
+          SECTION 2 — IDENTITY
+      ══════════════════════════════════════ */}
+      <section
+        style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
+        className="relative min-h-screen flex flex-col justify-center items-center px-6 bg-black border-t border-white/[0.07] overflow-hidden"
+      >
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(30,50,150,0.07) 0%, transparent 70%)" }} />
+
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 70 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="max-w-2xl mx-auto"
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          className="relative z-10 max-w-2xl w-full"
         >
-          <div className="border border-white/10 rounded-3xl p-10 backdrop-blur-xl bg-white/[0.02] text-center space-y-4">
-            {/* DN monogram */}
-            <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center">
-                <svg width="36" height="28" viewBox="0 0 120 80" fill="none" stroke="white" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="10" y1="8" x2="10" y2="72" />
-                  <line x1="10" y1="8" x2="22" y2="8" />
-                  <path d="M 22,8 Q 52,8 52,40 Q 52,72 22,72" />
-                  <line x1="22" y1="72" x2="10" y2="72" />
-                  <line x1="65" y1="8" x2="65" y2="72" />
-                  <line x1="65" y1="8" x2="110" y2="72" />
-                  <line x1="110" y1="8" x2="110" y2="72" />
-                </svg>
+          <div className="border border-white/10 rounded-3xl p-12 backdrop-blur-xl bg-white/[0.02] text-center space-y-5">
+            <motion.div
+              initial={{ scale: 0.65, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="flex justify-center mb-8"
+            >
+              <div className="w-24 h-24 rounded-2xl overflow-hidden border border-white/15 shadow-[0_0_40px_rgba(255,255,255,0.08)]">
+                <Image
+                  src="/favicon.png"
+                  alt="Data Nexus Logo"
+                  width={96}
+                  height={96}
+                  className="w-full h-full object-cover"
+                  priority
+                />
               </div>
-            </div>
+            </motion.div>
 
             <p className="text-xs text-gray-500 uppercase tracking-[0.3em]">Established under</p>
-            <h3 className="text-2xl md:text-3xl font-semibold text-white">
+            <motion.h2
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="text-3xl md:text-4xl font-semibold text-white"
+            >
               Department of Data Science
-            </h3>
-            <p className="text-zinc-400">
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.45 }}
+              className="text-zinc-400 text-lg"
+            >
               Joginpally B.R. Engineering College
-            </p>
-            <p className="text-zinc-600 text-xs tracking-wide">UGC Autonomous · Yenkapally, Moinabad</p>
+            </motion.p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.55 }}
+              className="text-zinc-600 text-xs tracking-widest pt-2"
+            >
+              UGC Autonomous · Yenkapally, Moinabad
+            </motion.p>
           </div>
         </motion.div>
       </section>
 
-      {/* ─── FOCUS AREAS ─── */}
-      <section className="py-32 px-6 border-t border-white/10">
-        <div className="max-w-6xl mx-auto space-y-20">
+      {/* ══════════════════════════════════════
+          SECTION 3 — STATS
+      ══════════════════════════════════════ */}
+      <section
+        style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
+        className="relative min-h-screen flex flex-col justify-center items-center px-6 bg-black border-t border-white/[0.07] overflow-hidden"
+      >
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(20,100,60,0.05) 0%, transparent 70%)" }} />
+
+        <div className="relative z-10 max-w-5xl mx-auto w-full space-y-16">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center space-y-4"
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            className="text-center space-y-3"
           >
-            <p className="text-xs text-gray-500 uppercase tracking-[0.3em]">What we do</p>
-            <h2 className="text-4xl md:text-5xl font-semibold tracking-tight">Our Focus</h2>
-            <p className="text-zinc-500 max-w-xl mx-auto">
-              We operate at the intersection of data, technology, and innovation.
-            </p>
+            <p className="text-xs text-gray-500 uppercase tracking-[0.3em]">By the numbers</p>
+            <h2 className="text-4xl md:text-6xl font-bold tracking-tight">Our Impact</h2>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {focusAreas.map((item, index) => (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
+            {stats.map((stat, i) => (
               <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 40 }}
+                key={stat.label}
+                initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.12, duration: 0.5 }}
-                whileHover={{ scale: 1.03, y: -4 }}
-                className="group border border-white/10 rounded-3xl p-10 backdrop-blur-xl bg-white/[0.03] hover:border-white/30 hover:bg-white/[0.06] transition-all duration-300"
+                transition={{ delay: i * 0.12, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="text-center space-y-3"
               >
-                {/* Icon */}
-                <div className="text-white/60 group-hover:text-white transition mb-6">
-                  {item.icon}
-                </div>
-
-                <h3 className="text-xl font-semibold mb-3">{item.title}</h3>
-                <p className="text-zinc-500 leading-relaxed text-sm">{item.desc}</p>
-
-                {/* Expanding bottom line on hover */}
-                <div className="mt-8 h-[1px] bg-white/20 w-0 group-hover:w-full transition-all duration-500" />
+                <p className="text-5xl md:text-6xl font-bold tabular-nums tracking-tight bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent">
+                  <CountUp target={stat.value} />
+                  <span>{stat.suffix ?? "+"}</span>
+                </p>
+                <p className="text-xs text-gray-500 uppercase tracking-widest">{stat.label}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
-    </>
+
+      {/* ══════════════════════════════════════
+          SECTION 4 — FOCUS AREAS
+      ══════════════════════════════════════ */}
+      <section
+        style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
+        className="relative min-h-screen flex flex-col justify-center items-center px-6 py-20 bg-black border-t border-white/[0.07] overflow-hidden"
+      >
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse 80% 50% at 50% 30%, rgba(80,30,120,0.06) 0%, transparent 70%)" }} />
+
+        <div className="relative z-10 max-w-6xl mx-auto w-full space-y-16">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="text-center space-y-4"
+          >
+            <p className="text-xs text-gray-500 uppercase tracking-[0.3em]">What we do</p>
+            <h2 className="text-4xl md:text-6xl font-bold tracking-tight">Our Focus</h2>
+            <p className="text-zinc-500 max-w-xl mx-auto text-lg">
+              We operate at the intersection of data, technology, and innovation.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {focusAreas.map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ delay: index * 0.14, duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ scale: 1.03, y: -7 }}
+                className={`group relative border border-white/10 rounded-3xl p-10 backdrop-blur-xl bg-gradient-to-br ${item.gradient} hover:border-white/25 transition-all duration-300 overflow-hidden`}
+              >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{ background: "radial-gradient(ellipse at top left, rgba(255,255,255,0.04), transparent 60%)" }} />
+                <div className={`${item.iconColor} mb-6 transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-110`}>
+                  {item.icon}
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-white">{item.title}</h3>
+                <p className="text-zinc-500 leading-relaxed text-sm">{item.desc}</p>
+                <div className="mt-8 h-[1px] bg-gradient-to-r from-white/0 via-white/25 to-white/0 w-0 group-hover:w-full transition-all duration-500" />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          SECTION 5 — FACULTY
+      ══════════════════════════════════════ */}
+      <section
+        style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
+        className="relative min-h-screen flex flex-col justify-center items-center px-6 py-20 bg-black border-t border-white/[0.07] overflow-hidden"
+      >
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(30,60,90,0.06) 0%, transparent 70%)" }} />
+
+        <div className="relative z-10 max-w-6xl mx-auto w-full space-y-16">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            className="text-center space-y-4"
+          >
+            <p className="text-xs text-gray-500 uppercase tracking-[0.3em]">Under the guidance of</p>
+            <h2 className="text-4xl md:text-6xl font-bold tracking-tight">Faculty Coordinators</h2>
+            <p className="text-zinc-500 max-w-xl mx-auto">
+              Guided and supported by the Department of Data Science.
+            </p>
+          </motion.div>
+
+          {faculty.length === 0 ? (
+            <p className="text-center text-zinc-500">Faculty info coming soon.</p>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-10">
+              {faculty.map((member, i) => (
+                <motion.div
+                  key={member.slug}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.12, duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+                  className={`relative border rounded-3xl p-8 backdrop-blur-xl text-center transition-all duration-300 ${member.isHOD
+                    ? "border-white/25 bg-white/[0.06] shadow-[0_0_50px_rgba(255,255,255,0.05)]"
+                    : "border-white/10 bg-white/[0.03] hover:border-white/25 hover:bg-white/[0.06]"
+                    }`}
+                >
+                  {member.isHOD && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <span className="px-3 py-1 bg-white text-black text-[10px] font-semibold uppercase tracking-widest rounded-full">
+                        HOD
+                      </span>
+                    </div>
+                  )}
+                  <div className="w-28 h-28 mx-auto rounded-full bg-white/10 mb-6 overflow-hidden flex items-center justify-center border border-white/10">
+                    {member.photo ? (
+                      <img src={member.photo} alt={member.name} className="w-full h-full object-cover" loading="lazy" />
+                    ) : (
+                      <span className="text-3xl font-bold text-white/20">
+                        {member.name ? member.name[0].toUpperCase() : "?"}
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-xl font-semibold">{member.name || "TBA"}</h3>
+                  <p className="text-zinc-400 text-sm mt-2">{member.designation}</p>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          SECTION 6 — FOOTER
+      ══════════════════════════════════════ */}
+      <section style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}>
+        <Footer />
+      </section>
+    </div>
   );
 }

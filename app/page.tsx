@@ -1,6 +1,4 @@
-import FacultySection from "@/components/FacultySection";
 import HomeClient from "@/components/HomeClient";
-import StatsSection from "@/components/StatsSection";
 import { getAllEvents } from "@/lib/events";
 import { getTeamMembers } from "@/lib/team";
 import { getFacultyMembers } from "@/lib/faculty";
@@ -23,10 +21,8 @@ export default function Home() {
   ];
 
   return (
-    <main className="bg-black text-white">
-      <HomeClient tagline={settings.tagline} />
-      <StatsSection stats={stats} />
-      <FacultySection />
+    <main>
+      <HomeClient tagline={settings.tagline} stats={stats} faculty={faculty} />
     </main>
   );
 }
