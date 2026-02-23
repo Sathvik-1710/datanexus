@@ -244,19 +244,18 @@ export default function SuperAdminPanel() {
        IMAGE UPLOAD HELPER
        ────────────────────────────────────────────────────────────────────────── */
     async function uploadImage(file: File) {
-        setLoading(true);
         const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random()}.${fileExt}`;
+        const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
         const filePath = `${fileName}`;
 
-        console.log(`Attempting upload to 'uploads' bucket: ${filePath}`);
+        console.log(`Uploading to Supabase: ${filePath}`);
 
-        const { error: uploadError, data } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
             .from('uploads')
             .upload(filePath, file);
 
         if (uploadError) {
-            console.error("Supabase Upload Error:", uploadError);
+            console.error("Supabase Storage Error:", uploadError);
             throw uploadError;
         }
 
@@ -264,7 +263,6 @@ export default function SuperAdminPanel() {
             .from('uploads')
             .getPublicUrl(filePath);
 
-        console.log("Upload Success! Public URL:", publicUrl);
         return publicUrl;
     }
 
@@ -279,17 +277,22 @@ export default function SuperAdminPanel() {
 
             setUploading(true);
             try {
-                const newUrls = [...urls];
+                const uploadedUrls: string[] = [];
                 for (let i = 0; i < e.target.files.length; i++) {
                     const url = await uploadImage(e.target.files[i]);
-                    newUrls.push(url);
-                    if (!multiple) break; // Only one for team/faculty
+                    uploadedUrls.push(url);
+                    if (!multiple) break;
                 }
-                setUrls(multiple ? newUrls : [newUrls[newUrls.length - 1]]);
+
+                setUrls(prev => {
+                    if (multiple) return [...prev, ...uploadedUrls];
+                    return [uploadedUrls[uploadedUrls.length - 1]];
+                });
+
                 showSuccess("Image uploaded successfully.");
             } catch (err: any) {
-                setError(`Upload failed: ${err.message || "Unknown error"}. Ensure 'uploads' bucket exists and is Public.`);
-                console.error("Full Upload Error:", err);
+                setError(`Upload failed: ${err.message || "Unknown error"}. Check Supabase 'uploads' bucket.`);
+                console.error("Upload Error:", err);
             } finally {
                 setUploading(false);
             }
