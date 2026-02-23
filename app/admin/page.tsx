@@ -78,7 +78,11 @@ export default function SuperAdminPanel() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState("");
     const [activeTab, setActiveTab] = useState<"registrations" | "events" | "projects" | "team" | "faculty" | "settings">("registrations");
+
+
+    // UI States
     const [loading, setLoading] = useState(false);
+    const [isUploadingFile, setIsUploadingFile] = useState(false); // New lock state
     const [error, setError] = useState("");
     const [successMsg, setSuccessMsg] = useState("");
 
@@ -281,6 +285,7 @@ export default function SuperAdminPanel() {
             if (!e.target.files || e.target.files.length === 0) return;
 
             setUploading(true);
+            setIsUploadingFile(true); // Lock Save Button globally
             try {
                 const uploadedUrls: string[] = [];
                 for (let i = 0; i < e.target.files.length; i++) {
@@ -300,6 +305,7 @@ export default function SuperAdminPanel() {
                 console.error("Upload Error:", err);
             } finally {
                 setUploading(false);
+                setIsUploadingFile(false);
             }
         };
 
@@ -481,12 +487,13 @@ export default function SuperAdminPanel() {
                                 <button onClick={() => setIsModalOpen(false)} className="text-gray-500 hover:text-white transition"><X /></button>
                             </div>
 
-                            <form onSubmit={handleSave} className="space-y-6">
+                            <form key={editingItem?.id || 'new'} onSubmit={handleSave} className="p-8 space-y-6 flex flex-col min-h-full">
                                 {/* Hidden ID for updates */}
                                 {editingItem?.id && <input type="hidden" name="id" value={editingItem.id} />}
 
                                 {activeTab === 'events' && (
                                     <>
+
                                         <Input label="Title" name="title" defaultValue={editingItem?.title} required />
                                         <Input label="URL Slug" name="slug" defaultValue={editingItem?.slug} placeholder="e.g. ai-workshop-2026" required />
                                         <Input label="Date" name="date" type="date" defaultValue={editingItem?.date} required />
@@ -536,16 +543,17 @@ export default function SuperAdminPanel() {
 
                                 <div className="pt-4 flex gap-3">
                                     <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-4 border border-white/10 rounded-xl font-bold hover:bg-white/5 transition">Cancel</button>
-                                    <button type="submit" disabled={loading} className="flex-1 py-4 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2">
-                                        {loading ? "Saving..." : "Apply Changes Now"}
+                                    <button type="submit" disabled={loading || isUploadingFile} className="flex-1 py-4 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                                        {loading ? "Saving..." : isUploadingFile ? "Wait for Upload..." : "Apply Changes Now"}
                                     </button>
                                 </div>
                             </form>
                         </motion.div>
                     </div>
-                )}
-            </AnimatePresence>
-        </div>
+                )
+                }
+            </AnimatePresence >
+        </div >
     );
 }
 
