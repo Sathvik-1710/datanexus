@@ -262,23 +262,7 @@ export default function HomeClient({
           </motion.div>
         </div>
 
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.7 }}
-          style={{ zIndex: 10, position: "absolute", bottom: "2.5rem" }}
-          className="flex flex-col items-center gap-2"
-        >
-          <div className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center p-1">
-            <motion.div
-              className="w-1 h-2 rounded-full bg-white/60"
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-            />
-          </div>
-          <span className="text-[10px] tracking-[0.3em] uppercase text-white/25">Scroll</span>
-        </motion.div>
+
       </section >
 
       {/* ══════════════════════════════════════
