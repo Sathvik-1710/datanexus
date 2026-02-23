@@ -170,6 +170,20 @@ export default function SuperAdminPanel() {
         try {
             const { error } = await supabase.from(activeTab).delete().eq('id', id);
             if (error) throw error;
+
+            // --- CACHE REFRESH ---
+            try {
+                await fetch('/api/revalidate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        path: activeTab === 'events' ? '/events' :
+                            activeTab === 'projects' ? '/projects' :
+                                activeTab === 'team' ? '/team' : '/'
+                    })
+                });
+            } catch { /* ignore reval timeout */ }
+
             showSuccess("Deleted successfully.");
             fetchAllData();
         } catch (err: any) {

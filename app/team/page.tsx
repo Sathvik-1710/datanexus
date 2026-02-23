@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   description: "Meet the leadership team of Data Nexus — the student-led tech club at JBREC.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function TeamPage() {
   const members = await getTeamMembers();
 
