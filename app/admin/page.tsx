@@ -489,7 +489,7 @@ export default function SuperAdminPanel() {
                                         <Input label="GitHub Repo Link" name="github_url" defaultValue={editingItem?.github_url} />
                                         <Input label="LinkedIn/Post Link" name="linkedin_url" defaultValue={editingItem?.linkedin_url} />
                                         <Input label="Live Demo Link" name="live_url" defaultValue={editingItem?.live_url} />
-                                        <FileUploader label="Project Showcase (Carousel Images)" name="images" defaultValue={editingItem?.images} multiple={true} />
+                                        <FileUploader key={editingItem?.id || 'new'} label="Project Showcase (Carousel Images)" name="images" defaultValue={editingItem?.images} multiple={true} />
                                         <TextArea label="Project Description" name="description" defaultValue={editingItem?.description} />
                                     </>
                                 )}
