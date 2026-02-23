@@ -334,7 +334,7 @@ export default function SuperAdminPanel() {
                 </div>
 
                 {/* Hidden input to include the value in the form submission */}
-                <input type="hidden" name={name} value={multiple ? urls.join(', ') : (urls[0] || '')} />
+                <input type="hidden" name={name} value={multiple ? urls.join(',') : (urls[0] || '')} />
                 <p className="text-[10px] text-gray-600">Supports PNG, JPG, WEBP. Max 5MB recommended.</p>
             </div>
         );
