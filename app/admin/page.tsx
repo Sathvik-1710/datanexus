@@ -174,31 +174,6 @@ export default function SuperAdminPanel() {
         }
     }
 
-    /* ──────────────────────────────────────────────────────────────────────────
-       IMAGE UPLOAD HELPER
-       ────────────────────────────────────────────────────────────────────────── */
-    async function uploadImage(file: File) {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-        const filePath = `${fileName}`;
-
-        console.log(`Uploading file to storage: ${filePath}`);
-
-        const { error: uploadError } = await supabase.storage
-            .from('uploads')
-            .upload(filePath, file);
-
-        if (uploadError) {
-            console.error("Storage Error:", uploadError);
-            throw uploadError;
-        }
-
-        const { data: { publicUrl } } = supabase.storage
-            .from('uploads')
-            .getPublicUrl(filePath);
-
-        return publicUrl;
-    }
 
     async function handleSave(e: React.FormEvent) {
         e.preventDefault();
@@ -275,70 +250,7 @@ export default function SuperAdminPanel() {
         }
     }
 
-    function FileUploader({ label, name, defaultValue, multiple = false }: { label: string, name: string, defaultValue?: string | string[], multiple?: boolean }) {
-        const [uploading, setUploading] = useState(false);
-        const [urls, setUrls] = useState<string[]>(
-            Array.isArray(defaultValue) ? defaultValue : (defaultValue ? [defaultValue] : [])
-        );
 
-        const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-            if (!e.target.files || e.target.files.length === 0) return;
-
-            setUploading(true);
-            setIsUploadingFile(true); // Lock Save Button globally
-            try {
-                const uploadedUrls: string[] = [];
-                for (let i = 0; i < e.target.files.length; i++) {
-                    const url = await uploadImage(e.target.files[i]);
-                    uploadedUrls.push(url);
-                    if (!multiple) break;
-                }
-
-                setUrls(prev => {
-                    if (multiple) return [...prev, ...uploadedUrls];
-                    return [uploadedUrls[uploadedUrls.length - 1]];
-                });
-
-                showSuccess("Image uploaded successfully.");
-            } catch (err: any) {
-                setError(`Upload failed: ${err.message || "Unknown error"}. Check Supabase 'uploads' bucket.`);
-                console.error("Upload Error:", err);
-            } finally {
-                setUploading(false);
-                setIsUploadingFile(false);
-            }
-        };
-
-        return (
-            <div className="space-y-3">
-                <label className="text-xs font-semibold text-gray-500 uppercase tracking-widest">{label}</label>
-
-                <div className="flex flex-wrap gap-3">
-                    {urls.map((url, idx) => (
-                        <div key={idx} className="relative w-20 h-20 group">
-                            <img src={url} className="w-full h-full object-cover rounded-xl border border-white/10" />
-                            <button
-                                type="button"
-                                onClick={() => setUrls(urls.filter((_, i) => i !== idx))}
-                                className="absolute -top-2 -right-2 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition"
-                            >
-                                <X size={12} />
-                            </button>
-                        </div>
-                    ))}
-
-                    <label className={`w-20 h-20 border-2 border-dashed border-white/10 rounded-xl flex items-center justify-center cursor-pointer hover:bg-white/5 transition hover:border-blue-500/50 ${uploading ? 'animate-pulse' : ''}`}>
-                        <Plus className="text-gray-500" />
-                        <input type="file" className="hidden" accept="image/*" multiple={multiple} onChange={handleFileChange} disabled={uploading} />
-                    </label>
-                </div>
-
-                {/* Hidden input to include the value in the form submission */}
-                <input type="hidden" name={name} value={multiple ? urls.join(',') : (urls[0] || '')} />
-                <p className="text-[10px] text-gray-600">Supports PNG, JPG, WEBP. Max 5MB recommended.</p>
-            </div>
-        );
-    }
 
     const downloadRegistrationsCSV = () => {
         let csvContent = "data:text/csv;charset=utf-8,Roll Number,Full Name,Year,Department,Sub-Group,Date\n";
@@ -497,7 +409,7 @@ export default function SuperAdminPanel() {
                                         <Input label="Title" name="title" defaultValue={editingItem?.title} required />
                                         <Input label="URL Slug" name="slug" defaultValue={editingItem?.slug} placeholder="e.g. ai-workshop-2026" required />
                                         <Input label="Date" name="date" type="date" defaultValue={editingItem?.date} required />
-                                        <FileUploader label="Event Images" name="images" defaultValue={editingItem?.images} multiple={true} />
+                                        <FileUploader label="Event Images" name="images" defaultValue={editingItem?.images} multiple={true} onUploadStart={() => setIsUploadingFile(true)} onUploadEnd={() => setIsUploadingFile(false)} onSuccess={showSuccess} onError={setError} />
                                         <Input label="Event Resource / Registration Link" name="link_url" defaultValue={editingItem?.link_url} placeholder="e.g. Google Docs, Form, or Hackathon link" />
                                         <TextArea label="Description" name="description" defaultValue={editingItem?.description} />
                                     </>
@@ -510,7 +422,7 @@ export default function SuperAdminPanel() {
                                         <Input label="GitHub Repo Link" name="github_url" defaultValue={editingItem?.github_url} />
                                         <Input label="LinkedIn/Post Link" name="linkedin_url" defaultValue={editingItem?.linkedin_url} />
                                         <Input label="Live Demo Link" name="live_url" defaultValue={editingItem?.live_url} />
-                                        <FileUploader key={editingItem?.id || 'new'} label="Project Showcase (Carousel Images)" name="images" defaultValue={editingItem?.images} multiple={true} />
+                                        <FileUploader key={editingItem?.id || 'new'} label="Project Showcase (Carousel Images)" name="images" defaultValue={editingItem?.images} multiple={true} onUploadStart={() => setIsUploadingFile(true)} onUploadEnd={() => setIsUploadingFile(false)} onSuccess={showSuccess} onError={setError} />
                                         <TextArea label="Project Description" name="description" defaultValue={editingItem?.description} />
                                     </>
                                 )}
@@ -520,7 +432,7 @@ export default function SuperAdminPanel() {
                                         <Input label="Full Name" name="name" defaultValue={editingItem?.name} required />
                                         <Input label="URL Name" name="slug" defaultValue={editingItem?.slug} required />
                                         <Input label="Designation / Role" name="role" defaultValue={editingItem?.role} required />
-                                        <FileUploader label="Profile Photo" name="photo" defaultValue={editingItem?.photo} />
+                                        <FileUploader label="Profile Photo" name="photo" defaultValue={editingItem?.photo} onUploadStart={() => setIsUploadingFile(true)} onUploadEnd={() => setIsUploadingFile(false)} onSuccess={showSuccess} onError={setError} />
                                         <Input label="LinkedIn URL" name="linkedin" defaultValue={editingItem?.linkedin} />
                                         <Input label="Sort Order" name="order" type="number" defaultValue={editingItem?.order || 0} />
                                         <TextArea label="Short Bio" name="bio" defaultValue={editingItem?.bio} />
@@ -532,7 +444,7 @@ export default function SuperAdminPanel() {
                                         <Input label="Faculty Name" name="name" defaultValue={editingItem?.name} required />
                                         <Input label="Slug" name="slug" defaultValue={editingItem?.slug} required />
                                         <Input label="Designation" name="designation" defaultValue={editingItem?.designation} required />
-                                        <FileUploader label="Profile Photo" name="photo" defaultValue={editingItem?.photo} />
+                                        <FileUploader label="Profile Photo" name="photo" defaultValue={editingItem?.photo} onUploadStart={() => setIsUploadingFile(true)} onUploadEnd={() => setIsUploadingFile(false)} onSuccess={showSuccess} onError={setError} />
                                         <div className="flex items-center gap-2">
                                             <input type="checkbox" name="is_hod" defaultChecked={editingItem?.is_hod} className="w-4 h-4" />
                                             <label className="text-sm font-medium">Head of Department (HOD)</label>
@@ -560,6 +472,94 @@ export default function SuperAdminPanel() {
 /* ──────────────────────────────────────────────────────────────────────────
    HELPER COMPONENTS
    ────────────────────────────────────────────────────────────────────────── */
+
+async function uploadImage(file: File) {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+    const filePath = `${fileName}`;
+
+    console.log(`Uploading file to storage: ${filePath}`);
+
+    const { error: uploadError } = await supabase.storage
+        .from('uploads')
+        .upload(filePath, file);
+
+    if (uploadError) {
+        console.error("Storage Error:", uploadError);
+        throw uploadError;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+        .from('uploads')
+        .getPublicUrl(filePath);
+
+    return publicUrl;
+}
+
+function FileUploader({ label, name, defaultValue, multiple = false, onUploadStart, onUploadEnd, onSuccess, onError }: any) {
+    const [uploading, setUploading] = useState(false);
+    const [urls, setUrls] = useState<string[]>(
+        Array.isArray(defaultValue) ? defaultValue : (defaultValue ? [defaultValue] : [])
+    );
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+
+        setUploading(true);
+        if (onUploadStart) onUploadStart();
+
+        try {
+            const uploadedUrls: string[] = [];
+            for (let i = 0; i < e.target.files.length; i++) {
+                const url = await uploadImage(e.target.files[i]);
+                uploadedUrls.push(url);
+                if (!multiple) break;
+            }
+
+            setUrls(prev => {
+                const newUrls = multiple ? [...prev, ...uploadedUrls] : [uploadedUrls[uploadedUrls.length - 1]];
+                return newUrls;
+            });
+
+            if (onSuccess) onSuccess("Image uploaded successfully.");
+        } catch (err: any) {
+            if (onError) onError(`Upload failed: ${err.message || "Unknown error"}. Check Supabase 'uploads' bucket.`);
+            console.error("Upload Error:", err);
+        } finally {
+            setUploading(false);
+            if (onUploadEnd) onUploadEnd();
+        }
+    };
+
+    return (
+        <div className="space-y-3">
+            <label className="text-xs font-semibold text-gray-500 uppercase tracking-widest">{label}</label>
+
+            <div className="flex flex-wrap gap-3">
+                {urls.map((url, idx) => (
+                    <div key={idx} className="relative w-20 h-20 group">
+                        <img src={url} className="w-full h-full object-cover rounded-xl border border-white/10" />
+                        <button
+                            type="button"
+                            onClick={() => setUrls(urls.filter((_, i) => i !== idx))}
+                            className="absolute -top-2 -right-2 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition"
+                        >
+                            <X size={12} />
+                        </button>
+                    </div>
+                ))}
+
+                <label className={`w-20 h-20 border-2 border-dashed border-white/10 rounded-xl flex items-center justify-center cursor-pointer hover:bg-white/5 transition hover:border-blue-500/50 ${uploading ? 'animate-pulse' : ''}`}>
+                    <Plus className="text-gray-500" />
+                    <input type="file" className="hidden" accept="image/*" multiple={multiple} onChange={handleFileChange} disabled={uploading} />
+                </label>
+            </div>
+
+            <input type="hidden" name={name} value={multiple ? urls.join(',') : (urls[0] || '')} />
+            <p className="text-[10px] text-gray-600">Supports PNG, JPG, WEBP. Max 5MB recommended.</p>
+        </div>
+    );
+}
 
 function NavItem({ active, icon, label, onClick }: any) {
     return (
