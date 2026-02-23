@@ -175,13 +175,23 @@ export default function SuperAdminPanel() {
             }
 
             // Determine conflict column
-            // We use 'id' if it exists in the data, otherwise fall back to slug
-            let conflictCol = 'slug';
-            if (activeTab === 'settings') conflictCol = 'id';
-            else if (data.id) conflictCol = 'id';
+            let conflictCol = 'id'; // Default to ID for safety
+            if (!data.id) {
+                // If it's a new record without an ID, we use slug as the unique constraint
+                conflictCol = 'slug';
+                if (activeTab === 'settings') conflictCol = 'id';
+            }
 
-            const { error } = await supabase.from(activeTab).upsert(data, { onConflict: conflictCol });
-            if (error) throw error;
+            // Remove empty strings from ID so Supabase generates a new UUID for new items
+            if (data.id === "") delete data.id;
+
+            const { data: result, error } = await supabase.from(activeTab).upsert(data, { onConflict: conflictCol });
+
+            if (error) {
+                console.error("Supabase Save Error:", error);
+                alert(`❌ Database Error: ${error.message} (${error.code})\n\nCheck if you ran the SQL policies for this table.`);
+                throw error;
+            }
 
             // Trigger Next.js revalidation so changes appear instantly on the live site
             try {
