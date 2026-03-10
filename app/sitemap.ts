@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getAllEvents } from "@/lib/events";
 
-const BASE_URL = "https://datanexus.netlify.app";
+const BASE_URL = "https://data-nexus.dev";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Static routes
