@@ -14,6 +14,14 @@ export async function POST(req: Request) {
             );
         }
 
+        const mobile = (data.mobile || "").trim();
+        if (!mobile.match(/^[6-9][0-9]{9}$/)) {
+            return NextResponse.json(
+                { error: "Invalid mobile number. Please enter a valid 10-digit Indian mobile number." },
+                { status: 400 }
+            );
+        }
+
         // 1. Check for duplicate enrollments via Supabase
         const { data: existingUser } = await supabase
             .from('registrations')
@@ -36,6 +44,8 @@ export async function POST(req: Request) {
                 roll_no: rollNo,
                 year: data.year,
                 department: data.department,
+                section: data.section,
+                mobile: mobile,
                 sub_group: data.subGroup,
                 created_at: new Date().toISOString()
             }]);

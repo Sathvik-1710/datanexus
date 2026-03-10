@@ -20,6 +20,8 @@ type Registration = {
     roll_no: string;
     year: string;
     department: string;
+    section: string;
+    mobile: string;
     sub_group: string;
     created_at: string;
 };
@@ -270,9 +272,9 @@ export default function SuperAdminPanel() {
 
 
     const downloadRegistrationsCSV = () => {
-        let csvContent = "data:text/csv;charset=utf-8,Roll Number,Full Name,Year,Department,Sub-Group,Date\n";
+        let csvContent = "data:text/csv;charset=utf-8,Roll Number,Full Name,Year,Department,Section,Mobile,Sub-Group,Date\n";
         registrations.forEach(r => {
-            csvContent += `"${r.roll_no}","${r.name}","${r.year}","${r.department}","${r.sub_group}","${new Date(r.created_at).toLocaleString()}"\n`;
+            csvContent += `"${r.roll_no}","${r.name}","${r.year}","${r.department}","${r.section || ''}","${r.mobile ? '+91' + r.mobile : ''}","${r.sub_group}","${new Date(r.created_at).toLocaleString()}"\n`;
         });
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
@@ -614,6 +616,8 @@ function RegistrationsTable({ data }: { data: Registration[] }) {
                         <th className="px-6 py-4">Student</th>
                         <th className="px-6 py-4">Roll</th>
                         <th className="px-6 py-4">Department</th>
+                        <th className="px-6 py-4">Section</th>
+                        <th className="px-6 py-4">Mobile</th>
                         <th className="px-6 py-4">Sub-Group</th>
                         <th className="px-6 py-4 text-right">Registered</th>
                     </tr>
@@ -624,6 +628,8 @@ function RegistrationsTable({ data }: { data: Registration[] }) {
                             <td className="px-6 py-4 font-semibold">{r.name}</td>
                             <td className="px-6 py-4 text-gray-500 font-mono">{r.roll_no}</td>
                             <td className="px-6 py-4 text-gray-400">{r.department}</td>
+                            <td className="px-6 py-4 text-gray-400">{r.section || '—'}</td>
+                            <td className="px-6 py-4 text-gray-400 font-mono">{r.mobile ? `+91 ${r.mobile}` : '—'}</td>
                             <td className="px-6 py-4">
                                 <span className="bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full text-[10px] font-bold border border-blue-500/10">
                                     {r.sub_group}

@@ -17,6 +17,8 @@ const DEPARTMENTS = [
     "Other"
 ];
 
+const SECTIONS = ["A", "B", "C", "D", "E", "F"];
+
 const SUB_GROUPS = [
     "Data Science",
     "Data Security",
@@ -103,7 +105,7 @@ export default function JoinPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
                             onSubmit={handleSubmit}
-                            className="bg-white/[0.03] border border-white/10 rounded-3xl p-8 md:p-12 space-y-8 backdrop-blur-md"
+                            className="bg-white/[0.03] border border-white/10 rounded-3xl p-6 md:p-12 space-y-8 backdrop-blur-md"
                         >
                             {/* Personal Info */}
                             <div className="grid md:grid-cols-2 gap-6">
@@ -165,6 +167,46 @@ export default function JoinPage() {
                                     >
                                         <option value="" disabled>Select your department</option>
                                         {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Mobile & Section */}
+                            <div className="grid md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label htmlFor="mobile" className="text-sm font-medium text-gray-300">
+                                        Mobile Number <span className="text-red-400">*</span>
+                                    </label>
+                                    <div className="flex">
+                                        <span className="flex items-center px-3 bg-black/50 border border-r-0 border-white/10 rounded-l-xl text-gray-400 text-sm select-none">
+                                            +91
+                                        </span>
+                                        <input
+                                            required
+                                            id="mobile"
+                                            name="mobile"
+                                            type="tel"
+                                            maxLength={10}
+                                            pattern="[6-9][0-9]{9}"
+                                            placeholder="98XXXXXXXX"
+                                            title="Enter a valid 10-digit Indian mobile number starting with 6–9"
+                                            className="w-full bg-black/50 border border-white/10 rounded-r-xl px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <label htmlFor="section" className="text-sm font-medium text-gray-300">
+                                        Section <span className="text-red-400">*</span>
+                                    </label>
+                                    <select
+                                        required
+                                        id="section"
+                                        name="section"
+                                        defaultValue=""
+                                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition appearance-none"
+                                    >
+                                        <option value="" disabled>Select your section</option>
+                                        {SECTIONS.map(s => <option key={s} value={s}>{s}</option>)}
                                     </select>
                                 </div>
                             </div>
