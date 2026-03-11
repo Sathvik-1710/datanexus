@@ -107,7 +107,7 @@ export default function SuperAdminPanel() {
        ────────────────────────────────────────────────────────────────────────── */
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        if (password === process.env.NEXT_PUBLIC_ADMIN_PASSWORD || password === "sathvik2005") {
+        if (password === process.env.NEXT_PUBLIC_ADMIN_PASSWORD || password === "admin@nexus") {
             setIsAuthenticated(true);
             setError("");
         } else {
@@ -302,7 +302,7 @@ export default function SuperAdminPanel() {
                             <Lock size={30} />
                         </div>
                         <h1 className="text-2xl font-bold">Club Admin Login</h1>
-                        <p className="text-gray-500 text-sm">Welcome back, Sathvik. Please verify your credentials.</p>
+                        <p className="text-gray-500 text-sm">Welcome DataNexus Admin. Please verify your credentials.</p>
                     </div>
                     <form onSubmit={handleLogin} className="space-y-4">
                         <input
